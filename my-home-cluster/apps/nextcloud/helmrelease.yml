@@ -1,0 +1,18 @@
+piVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: nextcloud
+  namespace: nextcloud
+spec:
+  interval: 10m
+  chart:
+    spec:
+      chart: ./my-home-cluster/apps/nextcloud
+      version: 9.0.5
+      sourceRef:
+        kind: GitRepository
+        name: flux-system
+        namespace: flux-system
+      interval: 10m
+  values:
+    replicaCount: 2
