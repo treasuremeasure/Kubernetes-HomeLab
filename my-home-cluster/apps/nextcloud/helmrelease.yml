@@ -13,6 +13,6 @@ spec:
         kind: GitRepository
         name: flux-system
         namespace: flux-system
-      interval: 10m
+      interval: 1m
   values:
-    replicaCount: 2
+    replicaCount: 1
