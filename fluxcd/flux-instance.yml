@@ -44,4 +44,8 @@ spec:
     url: "https://github.com/treasuremeasure/Kubernetes-HomeLab"
     ref: "refs/heads/master"
     path: "my-home-cluster/"
+    decryption:
+      provider: sops
+      secretRef:
+        name: sops-age
   

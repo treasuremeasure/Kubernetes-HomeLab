@@ -3,7 +3,3 @@ kind: Kustomization
 resources:
   - helmrelease.yml
   - secret.yaml 
-decryption:
-  provider: sops
-  secretRef:
-    name: sops-age
