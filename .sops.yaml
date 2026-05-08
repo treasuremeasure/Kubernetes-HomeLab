@@ -1,0 +1,8 @@
+creation_rules:
+  - path_regex: my-home-cluster/apps/nextcloud/secret.yaml
+    key_groups:
+      - age:
+          - "age1tnc40zw8l5f2vh9qgnj4q3vcx74xpcgypwcvlfnw2x6j0yat4p8q4pc2q0"
+
+
+
