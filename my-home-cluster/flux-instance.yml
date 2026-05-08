@@ -38,14 +38,21 @@ spec:
             path: /spec/template/spec/tolerations
             value:
               - key: "CriticalAddonsOnly"
-                operator: "Exists"          
+                operator: "Exists"      
+      - target:
+          kind: Kustomization
+          name: flux-system
+        patch: |
+          - op: add
+            path: /spec/decryption
+            value:
+              provider: sops
+              secretRef:
+                name: sops-age    
   sync:
     kind: GitRepository
     url: "https://github.com/treasuremeasure/Kubernetes-HomeLab"
     ref: "refs/heads/master"
     path: "my-home-cluster/"
-    decryption:
-      provider: sops
-      secretRef:
-        name: sops-age
+    
   
