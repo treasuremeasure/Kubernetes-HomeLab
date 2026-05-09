@@ -1,13 +1,13 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: nextcloud
-  namespace: app-nextcloud
+  name: vault
+  namespace: infra-vault
 spec:
   interval: 10m
   chart:
     spec:
-      chart: ./my-home-cluster/apps/nextcloud
+      chart: ./my-home-cluster/infra/vault
       sourceRef:
         kind: GitRepository
         name: flux-system
