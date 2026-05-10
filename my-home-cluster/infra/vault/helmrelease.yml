@@ -12,15 +12,6 @@ spec:
         kind: GitRepository
         name: flux-system
         namespace: flux-system
+      valuesFiles:
+        - values.yaml
       interval: 1m
-  values:
-    replicaCount: 1
-    server:
-      volumes:
-        - name: vault-tls
-          secret:
-            secretName: vault-tls
-      volumeMounts:
-        - name: vault-tls
-          mountPath: /vault/tls
-          readOnly: true
