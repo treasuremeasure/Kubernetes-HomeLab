@@ -58,7 +58,7 @@ spec:
             pathType: {{ $pathType }}
             backend:
               service:
-                name: {{ $serviceName }}
+                name: vault-ui
                 port:
                   number: {{ $servicePort }}
         {{- end }}
