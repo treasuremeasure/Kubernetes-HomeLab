@@ -65,6 +65,9 @@ injector:
   # Deprecated: Please use global.externalVaultAddr instead.
   externalVaultAddr: ""
 
+  affinity:
+    podAntiAffinity: null
+
   # image sets the repo and tag of the vault-k8s image to use for the injector.
   image:
     repository: "mirror.gcr.io/hashicorp/vault-k8s"
