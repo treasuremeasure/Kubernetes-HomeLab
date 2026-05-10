@@ -486,11 +486,10 @@ server:
     #       name: ssl-redirect
     #       port:
     #         number: use-annotation
-    tls: []
+    tls: 
        - secretName: vault-tls
          hosts:
            - vault.kube.home
-
   # hostAliases is a list of aliases to be added to /etc/hosts. Specified as a YAML list.
   hostAliases: []
   # - ip: 127.0.0.1
