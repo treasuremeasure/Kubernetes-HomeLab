@@ -456,7 +456,10 @@ server:
     enabled: true
     labels: {}
       # traffic: external
-    annotations: {}
+    annotations: 
+      traefik.ingress.kubernetes.io/router.tls: "true"
+      traefik.ingress.kubernetes.io/service.serversscheme: https
+      traefik.ingress.kubernetes.io/service.serverstransport: insecure@internal
       # |
       # kubernetes.io/ingress.class: nginx
       # kubernetes.io/tls-acme: "true"
