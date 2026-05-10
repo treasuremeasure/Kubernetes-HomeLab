@@ -15,3 +15,12 @@ spec:
       interval: 1m
   values:
     replicaCount: 1
+    server:
+      volumes:
+        - name: vault-tls
+          secret:
+            secretName: vault-tls
+      volumeMounts:
+        - name: vault-tls
+          mountPath: /vault/tls
+          readOnly: true
