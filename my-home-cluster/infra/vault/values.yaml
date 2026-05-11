@@ -896,8 +896,8 @@ server:
         tls_disable = 1
         address = "[::]:8200"
         cluster_address = "[::]:8201"
-        tls_cert_file = "/vault/tls/vault-cert.pem"
-        tls_key_file  = "/vault/tls/vault-key.pem"
+       #tls_cert_file = "/vault/tls/vault-cert.pem"
+       #tls_key_file  = "/vault/tls/vault-key.pem"
         # Enable unauthenticated metrics access (necessary for Prometheus Operator)
         #telemetry {
         #  unauthenticated_metrics_access = "true"
