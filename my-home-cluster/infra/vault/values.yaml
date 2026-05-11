@@ -383,7 +383,7 @@ server:
     
     # Secret name where service-ca will store the generated certificate
     # IMPORTANT: Must match the secret name in server.volumes below
-    secretName: "vault-tls"
+    secretName: ""
     
     # ConfigMap name for service-ca CA bundle injection
     # IMPORTANT: Must match the ConfigMap name in server.volumes below
@@ -392,18 +392,18 @@ server:
   # IMPORTANT: Configure server.volumes, server.volumeMounts, AND server config to use service-ca
   #
   # Step 1: Mount the service-ca resources as volumes
-  volumes:
-      - name: vault-tls
-        secret:
-          secretName: vault-tls  # Must match serviceCA.secretName above
+#  volumes:
+ #     - name: vault-tls
+  #      secret:
+   #       secretName: vault-tls  # Must match serviceCA.secretName above
   #   - name: service-ca-bundle
   #     configMap:
   #       name: service-ca-bundle  # Must match serviceCA.configMapName above
   #
-  volumeMounts:
-      - name: vault-tls
-        mountPath: /vault/tls
-        readOnly: true
+#  volumeMounts:
+ #     - name: vault-tls
+  #      mountPath: /vault/tls
+  #      readOnly: true
   #   - name: service-ca-bundle
   #     mountPath: /vault/userconfig/service-ca-bundle
   #     readOnly: true
@@ -456,10 +456,7 @@ server:
     enabled: true
     labels: {}
       # traffic: external
-    annotations: 
-      traefik.ingress.kubernetes.io/router.tls: "true"
-      traefik.ingress.kubernetes.io/service.serversscheme: https
-      traefik.ingress.kubernetes.io/service.serverstransport: insecure@internal
+    annotations: {}
       # |
       # kubernetes.io/ingress.class: nginx
       # kubernetes.io/tls-acme: "true"
@@ -489,10 +486,10 @@ server:
     #       name: ssl-redirect
     #       port:
     #         number: use-annotation
-    tls: 
-       - secretName: vault-tls
-         hosts:
-           - vault.kube.home
+ #   tls: 
+  #     - secretName: vault-tls
+   #      hosts:
+    #       - vault.kube.home
   # hostAliases is a list of aliases to be added to /etc/hosts. Specified as a YAML list.
   hostAliases: []
   # - ip: 127.0.0.1
