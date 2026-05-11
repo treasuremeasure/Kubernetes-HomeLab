@@ -410,7 +410,7 @@ server:
   #
   # Step 2: Configure Vault listener to use the certificates (in server.ha.config or server.ha.raft.config)
   # listener "tcp" {
-  #   tls_disable = 0
+  #   tls_disable = 1
   #   address = "[::]:8200"
   #   cluster_address = "[::]:8201"
   #   tls_cert_file = "/vault/userconfig/vault-tls/tls.crt"
