@@ -9,3 +9,16 @@ rules:
   verbs: ["get", "list", "watch"]
 - nonResourceURLs: ["*"]
   verbs: ["get"]
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: argocd-cluster-writer
+rules:
+- apiGroups: ["rbac.authorization.k8s.io"]
+  resources:
+    - clusterroles
+    - clusterrolebindings
+  verbs: ["*"]

@@ -11,3 +11,18 @@ roleRef:
   kind: ClusterRole
   name: argocd-cluster-read-all
   apiGroup: rbac.authorization.k8s.io
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: argocd-cluster-writer-binding
+subjects:
+- kind: ServiceAccount
+  name: argocd-application-controller
+  namespace: infra-argocd
+roleRef:
+  kind: ClusterRole
+  name: argocd-cluster-writer
+  apiGroup: rbac.authorization.k8s.io
