@@ -23,7 +23,7 @@ podLabels: {}
 deploymentAnnotations: {}
 deploymentLabels: {}
 # Number of replicas to be deployed
-replicaCount: 1
+replicaCount: 2
 httpRoute:
     # -- Enable an HTTPRoute resource for nextcloud .
     enabled: false
@@ -783,7 +783,7 @@ imaginary:
     # -- Start Imgaginary
     enabled: false
     # -- Number of imaginary pod replicas to deploy
-    replicaCount: 2
+    replicaCount: 1
     image:
         # -- Imaginary image registry
         registry: docker.io
