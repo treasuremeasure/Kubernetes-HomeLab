@@ -2,4 +2,6 @@ ca.pem
 *.key
 *-key.pem
 *.csr
-
+vault.conf
+*-cert.pem
+*-cert.srl

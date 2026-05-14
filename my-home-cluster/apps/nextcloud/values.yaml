@@ -783,7 +783,7 @@ imaginary:
     # -- Start Imgaginary
     enabled: false
     # -- Number of imaginary pod replicas to deploy
-    replicaCount: 1
+    replicaCount: 2
     image:
         # -- Imaginary image registry
         registry: docker.io
