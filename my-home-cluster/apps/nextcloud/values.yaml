@@ -23,7 +23,7 @@ podLabels: {}
 deploymentAnnotations: {}
 deploymentLabels: {}
 # Number of replicas to be deployed
-replicaCount: 2
+replicaCount: 1
 httpRoute:
     # -- Enable an HTTPRoute resource for nextcloud .
     enabled: false
