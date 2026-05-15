@@ -958,7 +958,7 @@ prometheus:
         # @section -- Metrics
         additionalRules: []
 rbac:
-    enabled: false
+    enabled: true
     serviceaccount:
         create: true
         name: nextcloud-serviceaccount
