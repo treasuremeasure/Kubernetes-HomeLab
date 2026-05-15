@@ -117,7 +117,7 @@ nextcloud:
     password: ""
     ## Use an existing secret
     existingSecret:
-        enabled: false
+        enabled: true
         secretName: nextcloud-secret
         usernameKey: adminUsername
         passwordKey: adminPassword
