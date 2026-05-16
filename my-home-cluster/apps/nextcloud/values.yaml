@@ -119,8 +119,8 @@ nextcloud:
     existingSecret:
         enabled: false
         secretName: nextcloud-secret
-        usernameKey: adminUsername
-        passwordKey: adminPassword
+        usernameKey: ""
+        passwordKey: ""
     update: 0
     # If web server is not binding default port, you can define it
     containerPort: 80
