@@ -622,7 +622,7 @@ server:
 
   # extraEnvironmentVars is a list of extra environment variables to set with the stateful set. These could be
   # used to include variables required for auto-unseal.
-  extraEnvironmentVars: {}
+  extraEnvironmentVars: 
     VAULT_CACERT: /vault/userconfig/vault-ha-tls/vault.ca
     VAULT_TLSCERT: /vault/userconfig/vault-ha-tls/vault.crt
     VAULT_TLSKEY: /vault/userconfig/vault-ha-tls/vault.key
