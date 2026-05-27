@@ -65,10 +65,6 @@ Create image name that is used in the deployment
 Create environment variables used to configure the nextcloud container as well as the cron sidecar container.
 */}}
 {{- define "nextcloud.env" -}}
-{{- if .Values.phpClientHttpsFix.enabled }}
-- name: OVERWRITEPROTOCOL
-  value: {{ .Values.phpClientHttpsFix.protocol | quote }}
-{{- end }}
 {{- if .Values.internalDatabase.enabled }}
 - name: SQLITE_DATABASE
   value: {{ .Values.internalDatabase.name | quote }}
@@ -193,33 +189,6 @@ Create environment variables used to configure the nextcloud container as well a
 {{- end }}
 - name: NEXTCLOUD_DATA_DIR
   value: {{ .Values.nextcloud.datadir | quote }}
-{{- if .Values.nextcloud.mail.enabled }}
-- name: MAIL_FROM_ADDRESS
-  value: {{ .Values.nextcloud.mail.fromAddress | quote }}
-- name: MAIL_DOMAIN
-  value: {{ .Values.nextcloud.mail.domain | quote }}
-- name: SMTP_SECURE
-  value: {{ .Values.nextcloud.mail.smtp.secure | quote }}
-- name: SMTP_PORT
-  value: {{ .Values.nextcloud.mail.smtp.port | quote }}
-- name: SMTP_AUTHTYPE
-  value: {{ .Values.nextcloud.mail.smtp.authtype | quote }}
-- name: SMTP_HOST
-  valueFrom:
-    secretKeyRef:
-      name: {{ .Values.nextcloud.existingSecret.secretName | default (include "nextcloud.fullname" .) }}
-      key: {{ .Values.nextcloud.existingSecret.smtpHostKey }}
-- name: SMTP_NAME
-  valueFrom:
-    secretKeyRef:
-      name: {{ .Values.nextcloud.existingSecret.secretName | default (include "nextcloud.fullname" .) }}
-      key: {{ .Values.nextcloud.existingSecret.smtpUsernameKey }}
-- name: SMTP_PASSWORD
-  valueFrom:
-    secretKeyRef:
-      name: {{ .Values.nextcloud.existingSecret.secretName | default (include "nextcloud.fullname" .) }}
-      key: {{ .Values.nextcloud.existingSecret.smtpPasswordKey }}
-{{- end }}
 {{/*
 Redis env vars
 */}}
