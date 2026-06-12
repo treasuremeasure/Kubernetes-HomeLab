@@ -1,0 +1,19 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: argocd-server-tls 
+  namespace: infra-argocd 
+spec:
+  secretName: argocd-server-tls  
+  duration: 2160h               
+  renewBefore: 360h             
+  dnsNames:
+    - argocd.kube.home
+    - argocd.infra-argocd.svc.cluster.local
+    - argocd.infra-argocd.svc
+    - "*.argocd-internal.infra-argocd.svc.cluster.local"
+  ipAddresses:
+    - 127.0.0.1
+  issuerRef:
+    name: homelab-ca
+    kind: ClusterIssuer
