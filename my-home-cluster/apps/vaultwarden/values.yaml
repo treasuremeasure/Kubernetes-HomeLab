@@ -799,7 +799,7 @@ ingress:
   labels: {}
   ## @param ingress.tls Enable TLS on the ingress resource.
   ##
-  tls: false
+  tls: true
   ## @param ingress.hostname Hostname for the ingress.
   ##
   hostname: "warden.kube.home"
@@ -815,7 +815,7 @@ ingress:
   pathType: "Prefix"
   ## @param ingress.tlsSecret Kubernetes secret containing the SSL certificate when using the "nginx" class.
   ##
-  tlsSecret: ""
+  tlsSecret: "vaultwarden-tls"
   ## @param ingress.nginxAllowList Comma-separated list of IP addresses and subnets to allow.
   ##
   nginxAllowList: ""

@@ -1,0 +1,19 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: vaultwarden-tls 
+  namespace: app-vaultwarden 
+spec:
+  secretName: vaultwarden-tls 
+  duration: 2160h               
+  renewBefore: 360h             
+  dnsNames:
+    - warden.kube.home
+    - warden.app-vaultwarden.svc.cluster.local
+    - vault.app-vaultwarden.svc
+    - "*.vaultwarden-internal.app-vaultwarden.svc.cluster.local"
+  ipAddresses:
+    - 127.0.0.1
+  issuerRef:
+    name: homelab-ca
+    kind: ClusterIssuer
