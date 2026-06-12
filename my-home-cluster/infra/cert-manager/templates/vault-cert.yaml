@@ -1,0 +1,19 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: vault-tls
+  namespace: infra-vault
+spec:
+  secretName: vault-ha-tls
+  duration: 2160h               
+  renewBefore: 360h             
+  dnsNames:
+    - vault.kube.home
+    - vault.infra-vault.svc.cluster.local
+    - vault.infra-vault.svc
+    - "*.vault-internal.infra-vault.svc.cluster.local"
+  ipAddresses:
+    - 127.0.0.1
+  issuerRef:
+    name: homelab-ca
+    kind: ClusterIssuer
