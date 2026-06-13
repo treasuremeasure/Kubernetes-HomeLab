@@ -3,10 +3,12 @@ kind: Ingress
 metadata:
   name: argocd-server
   namespace: infra-argocd
-  annotations:
-    traefik.ingress.kubernetes.io/router.tls: "false"
 spec:
   ingressClassName: traefik
+  tls:                                  
+    - hosts:
+        - argocd.kube.home
+      secretName: argocd-server-tls
   rules:
   - host: argocd.kube.home
     http:
