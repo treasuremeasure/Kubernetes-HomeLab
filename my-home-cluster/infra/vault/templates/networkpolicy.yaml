@@ -34,3 +34,5 @@ spec:
           protocol: UDP
         - port: 53
           protocol: TCP
+        - port: 443
+          protocol: TCP
