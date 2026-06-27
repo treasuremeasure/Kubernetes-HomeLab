@@ -13,6 +13,9 @@ spec:
         - namespaceSelector:
             matchLabels:
               kubernetes.io/metadata.name: kube-system 
+      ports:
+        - port: 8200
+          protocol: TCP
     - from:
         - namespaceSelector:
             matchLabels:
@@ -25,14 +28,15 @@ spec:
         - namespaceSelector:
             matchLabels:
               kubernetes.io/metadata.name: kube-system
-    - to:
-        - namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: external-secrets  
       ports:
         - port: 53
           protocol: UDP
         - port: 53
           protocol: TCP
+        - namespaceSelector: {}
+      ports:
         - port: 443
           protocol: TCP
+        - port: 6443
+          protocol: TCP
+  
