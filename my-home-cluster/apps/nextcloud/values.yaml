@@ -603,7 +603,7 @@ persistence:
     ## Use an additional pvc for the data directory rather than a subpath of the default PVC
     ## Useful to store data on a different storageClass (e.g. on slower disks)
     nextcloudData:
-        enabled: true
+        enabled: false
         # -- If defined, use a hostPath volume for nextcloud data rather than a dynamically defined PVC.
         hostPath: null
         subPath: null
