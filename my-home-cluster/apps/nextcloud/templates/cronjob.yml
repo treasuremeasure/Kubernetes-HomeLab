@@ -1,0 +1,50 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: nextcloud-db-backup
+  namespace: app-nextcloud
+spec:
+  schedule: "0 3 * * *"            
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 3
+      template:
+        spec:
+          restartPolicy: OnFailure
+          affinity:
+            podAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                - labelSelector:
+                    matchExpressions:
+                      - key: app.kubernetes.io/name
+                        operator: In
+                        values: [nextcloud]
+                  topologyKey: kubernetes.io/hostname
+          containers:
+            - name: db-backup
+              image: alpine:3.20
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -e
+                  apk add --no-cache sqlite >/dev/null
+                  TS=$(date +%F-%H%M)
+                  echo "starting backup nextcloud-${TS}.db"
+                  sqlite3 /data/nextcloud.db ".backup '/backup/nextcloud-${TS}.db'"
+                  find /backup -name 'nextcloud-*.db' -mtime +14 -delete
+                  echo "done; current backups:"
+                  ls -la /backup
+              volumeMounts:
+                - name: nc-data
+                  mountPath: /data
+                  readOnly: true
+                - name: backup-dir
+                  mountPath: /backup
+          volumes:
+            - name: nc-data
+              persistentVolumeClaim:
+                claimName: <PVC-NEXTCLOUD>     
+            - name: backup-dir
