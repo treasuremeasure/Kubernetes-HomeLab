@@ -4,7 +4,7 @@ metadata:
   name: nextcloud-db-backup
   namespace: app-nextcloud
 spec:
-  schedule: "0 3 * * *"            
+  schedule: "30 22 * * *"            
   successfulJobsHistoryLimit: 3
   failedJobsHistoryLimit: 3
   jobTemplate:
@@ -46,5 +46,5 @@ spec:
           volumes:
             - name: nc-data
               persistentVolumeClaim:
-                claimName: <PVC-NEXTCLOUD>     
+                claimName: nextcloud-nextcloud     
             - name: backup-dir
