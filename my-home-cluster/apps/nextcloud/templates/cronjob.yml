@@ -4,7 +4,8 @@ metadata:
   name: nextcloud-db-backup
   namespace: app-nextcloud
 spec:
-  schedule: "30 22 * * *"            
+  timeZone: "Europe/Moscow"
+  schedule: "36 22 * * *"            
   successfulJobsHistoryLimit: 3
   failedJobsHistoryLimit: 3
   jobTemplate:
