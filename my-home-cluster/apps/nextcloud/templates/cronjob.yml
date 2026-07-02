@@ -5,12 +5,12 @@ metadata:
   namespace: app-nextcloud
 spec:
   timeZone: "Europe/Moscow"
-  schedule: "36 22 * * *"            
+  schedule: "41 22 * * *"            
   successfulJobsHistoryLimit: 3
   failedJobsHistoryLimit: 3
   jobTemplate:
     spec:
-      backoffLimit: 3
+      backoffLimit: 5
       template:
         spec:
           restartPolicy: OnFailure
