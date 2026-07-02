@@ -5,7 +5,7 @@ metadata:
   namespace: app-nextcloud
 spec:
   timeZone: "Europe/Moscow"
-  schedule: "37 0 * * *"            
+  schedule: "42 0 * * *"            
   successfulJobsHistoryLimit: 3
   failedJobsHistoryLimit: 3
   jobTemplate:
@@ -42,11 +42,12 @@ spec:
                   mountPath: /data
                   subPath: data  
                 - name: backup-dir
-                  hostPath:
-                    path: /media/server/SSD
-                    type: DirectoryOrCreate
+                  mountPath: /backup
           volumes:
             - name: nc-data
               persistentVolumeClaim:
                 claimName: nextcloud-nextcloud     
             - name: backup-dir
+              hostPath:                        
+                path: /media/server/SSD
+                type: DirectoryOrCreate 
