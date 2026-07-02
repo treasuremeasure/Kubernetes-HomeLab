@@ -5,7 +5,7 @@ metadata:
   namespace: app-nextcloud
 spec:
   timeZone: "Europe/Moscow"
-  schedule: "41 22 * * *"            
+  schedule: "46 22 * * *"            
   successfulJobsHistoryLimit: 3
   failedJobsHistoryLimit: 3
   jobTemplate:
@@ -25,13 +25,12 @@ spec:
                   topologyKey: kubernetes.io/hostname
           containers:
             - name: db-backup
-              image: alpine:3.20
+              image: nouchka/sqlite3:latest 
               command:
                 - /bin/sh
                 - -c
                 - |
                   set -e
-                  apk add --no-cache sqlite >/dev/null
                   TS=$(date +%F-%H%M)
                   echo "starting backup nextcloud-${TS}.db"
                   sqlite3 /data/nextcloud.db ".backup '/backup/nextcloud-${TS}.db'"
