@@ -1,0 +1,53 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: vaultwarden-db-backup
+  namespace: app-vaultwarden
+spec:
+  timeZone: "Europe/Moscow"
+  schedule: "42 0 * * *"            
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 5
+      template:
+        spec:
+          restartPolicy: OnFailure
+          affinity:
+            podAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                - labelSelector:
+                    matchExpressions:
+                      - key: app.kubernetes.io/name
+                        operator: In
+                        values: [vaultwarden]
+                  topologyKey: kubernetes.io/hostname
+          containers:
+            - name: db-backup
+              image: nouchka/sqlite3:latest 
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -e
+                  TS=$(date +%F-%H%M)
+                  echo "starting backup vaultwarden-${TS}.db"
+                  sqlite3 /data/db.sqlite3 ".backup '/backup/vaultwarden-${TS}.db'"
+                  find /backup -name 'nextcloud-*.db' -mtime +14 -delete
+                  echo "done; current backups:"
+                  ls -la /backup
+              volumeMounts:
+                - name: vaultwarden-data
+                  mountPath: /data
+                  subPath: data  
+                - name: backup-dir
+                  mountPath: /backup
+          volumes:
+            - name: vaultwarden-data
+              persistentVolumeClaim:
+                claimName: vaultwarden-data-vaultwarden-0  
+            - name: backup-dir
+              hostPath:                        
+                path: /media/server/SSD/vaultwarden
+                type: DirectoryOrCreate 
