@@ -34,7 +34,7 @@ spec:
                   TS=$(date +%F-%H%M)
                   echo "starting backup vaultwarden-${TS}.db"
                   sqlite3 /data/db.sqlite3 ".backup '/backup/vaultwarden-${TS}.db'"
-                  find /backup -name 'nextcloud-*.db' -mtime +14 -delete
+                  find /backup -name 'vaultwarden-*.db' -mtime +14 -delete
                   echo "done; current backups:"
                   ls -la /backup
               volumeMounts:
