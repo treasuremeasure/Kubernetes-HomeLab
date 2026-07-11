@@ -292,20 +292,18 @@ storage:
   ## If attachments are in a different volume, please mount it using extraVolumeMounts.
   ##
   existingVolumeClaim:
-    {}
-    # claimName: "vaultwarden-pvc"
-    # dataPath: "/data"
+     claimName: "vaultwarden-pvc"
+     dataPath: "/data"
 
   ## @param storage.data Data directory configuration, refer to values.yaml for parameters.
   ##
   data:
-    {}
-    # name: "vaultwarden-data"
-    # size: "15Gi"
-    # class: ""
-    # path: "/data"
-    # keepPvc: false
-    # accessMode: "ReadWriteOnce"
+     name: "vaultwarden-data"
+     size: "3Gi"
+     class: ""
+     path: "/data"
+     keepPvc: false
+     accessMode: "ReadWriteOnce"
 
   ## @param storage.attachments Attachments directory configuration, refer to values.yaml for parameters.
   ## By default, attachments/ is located inside the data directory.
