@@ -49,5 +49,5 @@ spec:
                 claimName: nextcloud-nextcloud     
             - name: backup-dir
               hostPath:                        
-                path: /media/server/SSD
+                path: /media/server/SSD/nextcloud
                 type: DirectoryOrCreate 
