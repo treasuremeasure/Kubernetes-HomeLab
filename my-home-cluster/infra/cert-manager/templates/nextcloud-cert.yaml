@@ -2,11 +2,11 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: nextcloud-tls
-  namespace: app-nextcloud	
+  namespace: app-nextcloud
 spec:
   secretName: nextcloud-tls
-  duration: 2160h               
-  renewBefore: 360h             
+  duration: 2160h
+  renewBefore: 360h
   dnsNames:
     - nextcloud.kube.home
     - nextcloud.app-nextcloud.svc.cluster.local
@@ -17,4 +17,3 @@ spec:
   issuerRef:
     name: homelab-ca
     kind: ClusterIssuer
-
