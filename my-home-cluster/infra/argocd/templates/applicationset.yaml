@@ -6,7 +6,7 @@ metadata:
 spec:
   generators:
     - git:
-        repoURL: https://github.com/rizaorduhani/Kubernetes-HomeLab
+        repoURL: https://github.com/treasuremeasure/Kubernetes-HomeLab
         revision: HEAD
         directories:
           - path: 'my-home-cluster/**'
