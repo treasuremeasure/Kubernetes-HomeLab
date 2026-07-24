@@ -11,9 +11,18 @@ spec:
         directories:
           - path: 'my-home-cluster/**'
   template:
+    metadata:
+      name: '{{ "{{path.basename}}" }}'
     spec:
+      project: infra
       source:
         repoURL: https://github.com/treasuremeasure/Kubernetes-HomeLab
         path: '{{ "{{path}}" }}'
+        targetRevision: HEAD
       destination:
         server: https://kubernetes.default.svc
+        namespace: '{{ "{{path.basename}}" }}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: false
