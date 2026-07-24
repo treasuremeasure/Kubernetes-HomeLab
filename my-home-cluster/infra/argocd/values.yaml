@@ -789,6 +789,35 @@ extraObjects:
       - kind: ServiceAccount
         name: argocd-application-controller
         namespace: infra-argocd
+  # Role for Redis secret initialization
+  - apiVersion: rbac.authorization.k8s.io/v1
+    kind: Role
+    metadata:
+      name: argocd-redis-secret-init
+      namespace: infra-argocd
+    rules:
+      - apiGroups:
+          - ''
+        resources:
+          - secrets
+        verbs:
+          - get
+          - create
+          - patch
+  # RoleBinding for Redis secret initialization
+  - apiVersion: rbac.authorization.k8s.io/v1
+    kind: RoleBinding
+    metadata:
+      name: argocd-redis-secret-init-binding
+      namespace: infra-argocd
+    roleRef:
+      apiGroup: rbac.authorization.k8s.io
+      kind: Role
+      name: argocd-redis-secret-init
+    subjects:
+      - kind: ServiceAccount
+        name: argocd-redis
+        namespace: infra-argocd
 
 ## Application controller
 controller:
@@ -1835,13 +1864,13 @@ redis:
 
   serviceAccount:
     # -- Create a service account for the redis pod
-    create: false
+    create: true
     # -- Service account name for redis pod
-    name: ""
+    name: "argocd-redis"
     # -- Annotations applied to created service account
     annotations: {}
     # -- Automount API credentials for the Service Account
-    automountServiceAccountToken: false
+    automountServiceAccountToken: true
 
   service:
     # -- Redis service annotations
