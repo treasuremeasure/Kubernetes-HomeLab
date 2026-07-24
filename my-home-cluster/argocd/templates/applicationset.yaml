@@ -1,0 +1,19 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: home-cluster
+  namespace: infra-argocd
+spec:
+  generators:
+    - git:
+        repoURL: https://github.com/rizaorduhani/Kubernetes-HomeLab
+        revision: HEAD
+        directories:
+          - path: 'my-home-cluster/**'
+  template:
+    spec:
+      source:
+        repoURL: https://github.com/treasuremeasure/Kubernetes-HomeLab
+        path: '{{path}}'
+      destination:
+        server: https://kubernetes.default.svc
