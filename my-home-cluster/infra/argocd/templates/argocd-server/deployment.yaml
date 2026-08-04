@@ -410,10 +410,6 @@ spec:
           name: tmp
         - name: argocd-cmd-params-cm
           mountPath: /home/argocd/params
-        {{- if .Values.server.extensions.enabled }}
-        - mountPath: /tmp/extensions
-          name: extensions
-        {{- end }}
         ports:
         - name: server
           containerPort: {{ .Values.server.containerPorts.server }}
@@ -467,31 +463,9 @@ spec:
       {{- with .Values.server.extraContainers }}
         {{- tpl (toYaml .) $ | nindent 6 }}
       {{- end }}
-      {{- if or .Values.server.initContainers (and .Values.server.extensions.enabled .Values.server.extensions.extensionList) }}
-      initContainers:
       {{- with .Values.server.initContainers }}
+      initContainers:
         {{- tpl (toYaml .) $ | nindent 6 }}
-      {{- end }}
-      {{- if .Values.server.extensions.enabled }}
-      {{- range .Values.server.extensions.extensionList }}
-      - name: {{ .name }}
-        image: {{ $.Values.server.extensions.image.repository }}:{{ $.Values.server.extensions.image.tag }}
-        imagePullPolicy: {{ default $.Values.global.image.imagePullPolicy $.Values.server.extensions.image.imagePullPolicy }}
-        resources:
-          {{- toYaml $.Values.server.extensions.resources | nindent 10 }}
-        {{- with $.Values.server.extensions.containerSecurityContext }}
-        securityContext:
-          {{- toYaml . | nindent 10 }}
-        {{- end }}
-        volumeMounts:
-          - name: extensions
-            mountPath: /tmp/extensions/
-          - name: tmp
-            mountPath: /tmp
-        env:
-          {{- toYaml .env | nindent 10 }}
-      {{- end }}
-      {{- end }}
       {{- end }}
       {{- with include "argo-cd.affinity" (dict "context" . "component" .Values.server) }}
       affinity:
@@ -519,15 +493,6 @@ spec:
       volumes:
       {{- with (concat .Values.global.extraVolumes .Values.server.volumes) }}
         {{- toYaml . | nindent 6}}
-      {{- end }}
-      {{- if .Values.server.extensions.enabled }}
-      - name: extensions
-        {{- if .Values.server.emptyDir.sizeLimit }}
-        emptyDir:
-          sizeLimit: {{ .Values.server.emptyDir.sizeLimit }}
-        {{- else }}
-        emptyDir: {}
-        {{- end }}
       {{- end }}
       - name: plugins-home
         {{- if .Values.server.emptyDir.sizeLimit }}

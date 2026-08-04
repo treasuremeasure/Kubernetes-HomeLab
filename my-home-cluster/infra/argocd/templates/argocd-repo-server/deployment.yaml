@@ -88,10 +88,6 @@ spec:
           {{- with (concat .Values.global.env .Values.repoServer.env) }}
             {{- tpl (toYaml .) $ | nindent 10 }}
           {{- end }}
-          {{- if .Values.openshift.enabled }}
-          - name: USER_NAME
-            value: argocd
-          {{- end }}
           - name: ARGOCD_REPO_SERVER_NAME
             value: {{ template "argo-cd.repoServer.fullname" . }}
           - name: ARGOCD_RECONCILIATION_TIMEOUT
