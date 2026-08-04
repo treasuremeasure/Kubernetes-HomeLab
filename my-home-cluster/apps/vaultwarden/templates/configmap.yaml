@@ -1,12 +1,3 @@
-{{- with .Values.ingress.customHeadersConfigMap }}
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: custom-headers-configmap
-data:
-  {{- toYaml . | nindent 2 }}
----
-{{- end }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -39,9 +30,6 @@ data:
   {{- if .Values.storage.data }}
   DATA_FOLDER: {{ default "/data" .Values.storage.data.path | quote }}
   {{- end }}
-  {{- if .Values.storage.attachments }}
-  ATTACHMENTS_FOLDER: {{ default "/data/attachments" .Values.storage.attachments.path | quote }}
-  {{- end }}
   ROCKET_ADDRESS: {{ .Values.rocket.address | quote }}
   ROCKET_PORT: {{ .Values.rocket.port | quote }}
   ROCKET_WORKERS: {{ .Values.rocket.workers | quote }}
@@ -73,32 +61,11 @@ data:
   PUSH_IDENTITY_URI: {{ . | quote }}
   {{- end }}
   {{- end }}
-  {{- if and .Values.yubico.clientId (or .Values.yubico.secretKey.value .Values.yubico.secretKey.existingSecretKey) }}
-  YUBICO_CLIENT_ID: {{ .Values.yubico.clientId | quote }}
-  {{- if .Values.yubico.server }}
-  YUBICO_SERVER: {{ .Values.yubico.server | quote }}
-  {{- end }}
-  {{- end }}
-  {{- if and .Values.duo.iKey .Values.duo.hostname (or .Values.duo.sKey.value .Values.duo.sKey.existingSecretKey) }}
-  DUO_IKEY: {{ .Values.duo.iKey | quote }}
-  DUO_HOST: {{ .Values.duo.hostname | quote }}
-  {{- end }}
-  {{- with .Values.experimentalClientFeatureFlags }}
-  EXPERIMENTAL_CLIENT_FEATURE_FLAGS: {{ . | quote }}
-  {{- end }}
-  {{- with .Values.orgCreationUsers }}
-  ORG_CREATION_USERS: {{ . | quote }}
-  {{- end }}
   ORG_EVENTS_ENABLED: {{ .Values.orgEventsEnabled | quote }}
-  ORG_GROUPS_ENABLED: {{ .Values.orgGroupsEnabled | quote }}
   SENDS_ALLOWED: {{ .Values.sendsAllowed | quote }}
   EMERGENCY_ACCESS_ALLOWED: {{ .Values.emergencyAccessAllowed | quote }}
   EMERGENCY_NOTIFICATION_REMINDER_SCHEDULE: {{ .Values.emergencyNotifReminderSched | quote }}
   EMERGENCY_REQUEST_TIMEOUT_SCHEDULE: {{ .Values.emergencyRqstTimeoutSched | quote }}
-  {{- if .Values.eventsDayRetain }}
-  EVENTS_DAYS_RETAIN: {{ .Values.eventsDayRetain | quote }}
-  EVENT_CLEANUP_SCHEDULE: {{ .Values.eventCleanupSched | quote }}
-  {{- end }}
   EXTENDED_LOGGING: {{ .Values.extendedLogging | quote }}
   LOG_TIMESTAMP_FORMAT: {{ .Values.logTimestampFormat | quote }}
   ICON_SERVICE: {{ .Values.iconService | quote }}
@@ -106,41 +73,7 @@ data:
   INVITATION_EXPIRATION_HOURS: {{ .Values.invitationExpirationHours | quote}}
   REQUIRE_DEVICE_EMAIL: {{ .Values.requireDeviceEmail | quote }}
   TRASH_AUTO_DELETE_DAYS: {{ .Values.trashAutoDeleteDays | quote }}
-  {{- with .Values.timeZone }}
-  TZ: {{ . | quote }}
-  {{- end }}
   {{- with include "vaultwarden.hibpApiKeyLegacy" . }}
   HIBP_API_KEY: {{ . | quote }}
   {{- end }}
-  {{- with .Values.orgAttachmentLimit }}
-  ORG_ATTACHMENT_LIMIT: {{ . | quote }}
-  {{- end }}
-  {{- with .Values.userAttachmentLimit }}
-  USER_ATTACHMENT_LIMIT: {{ . | quote }}
-  {{- end }}
-  {{- with .Values.userSendLimit }}
-  USER_SEND_LIMIT: {{ . | quote }}
-  {{- end }}
   EMAIL_CHANGE_ALLOWED: {{ .Values.emailChangeAllowed | quote }}
-  ADMIN_RATELIMIT_SECONDS: {{ .Values.adminRateLimitSeconds | quote }}
-  ADMIN_RATELIMIT_MAX_BURST: {{ .Values.adminRateLimitMaxBurst | quote }}
-  {{- if .Values.sso.enabled }}
-  SSO_ENABLED: {{ .Values.sso.enabled | quote }}
-  SSO_ONLY: {{ .Values.sso.onlySSO | quote }}
-  SSO_SIGNUPS_MATCH_EMAIL: {{ .Values.sso.signupsMatchEmail | quote }}
-  SSO_ALLOW_UNKNOWN_EMAIL_VERIFICATION: {{ .Values.sso.ignoreEmailVerification | quote }}
-  SSO_AUTHORITY: {{ .Values.sso.authority | quote }}
-  SSO_SCOPES: {{ .Values.sso.scopes | quote }}
-  SSO_AUTHORIZE_EXTRA_PARAMS: {{ .Values.sso.authorizeExtraParams | quote }}
-  SSO_PKCE: {{ .Values.sso.pkce | quote }}
-  SSO_AUDIENCE_TRUSTED: {{ .Values.sso.trustedAudience | quote }}
-  {{- if .Values.sso.masterPasswordPolicy }}
-  SSO_MASTER_PASSWORD_POLICY: {{ .Values.sso.masterPasswordPolicy | quote }}
-  {{- end }}
-  SSO_AUTH_ONLY_NOT_SESSION: {{ .Values.sso.authOnly | quote }}
-  SSO_CLIENT_CACHE_EXPIRATION: {{ .Values.sso.cacheExpiration | quote }}
-  SSO_DEBUG_TOKENS: {{ .Values.sso.debugTokens | quote }}
-  {{- if .Values.sso.enforceSSO }}
-  SSO_FRONTEND: "override"
-  {{- end }}
-  {{- end }}

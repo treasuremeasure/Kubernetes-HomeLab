@@ -26,9 +26,6 @@ securityContext:
 initContainers:
 {{- toYaml . | nindent 2 }}
 {{- end }}
-{{- if not .Values.enableServiceLinks }}
-enableServiceLinks: false
-{{- end }}
 containers:
   - image: {{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}
     imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -58,20 +55,6 @@ containers:
             key: {{ .key }}
       {{- end }}
       {{- end }}
-      {{- if or (.Values.yubico.secretKey.value) (.Values.yubico.secretKey.existingSecretKey) }}
-      - name: YUBICO_SECRET_KEY
-        valueFrom:
-          secretKeyRef:
-            name: {{ default (include "vaultwarden.fullname" .) .Values.yubico.existingSecret }}
-            key: {{ default "YUBICO_SECRET_KEY" .Values.yubico.secretKey.existingSecretKey }}
-      {{- end }}
-      {{- if or (.Values.duo.sKey.value) (.Values.duo.sKey.existingSecretKey) }}
-      - name: DUO_SKEY
-        valueFrom:
-          secretKeyRef:
-            name: {{ default (include "vaultwarden.fullname" .) .Values.duo.existingSecret }}
-            key: {{ default "DUO_SKEY" .Values.duo.sKey.existingSecretKey }}
-      {{- end }}  
       {{- if or (.Values.smtp.username.value) (.Values.smtp.username.existingSecretKey )}}
       - name: SMTP_USERNAME
         valueFrom:
@@ -94,20 +77,6 @@ containers:
             name: {{ default (include "vaultwarden.fullname" .) .Values.hibp.existingSecret }}
             key: {{ default "HIBP_API_KEY" .Values.hibp.existingSecretKey }}
       {{- end }}
-      {{- end }}
-      {{- if and .Values.sso.enabled (or (.Values.sso.clientId.value) (.Values.sso.clientId.existingSecretKey) )}}
-      - name: SSO_CLIENT_ID
-        valueFrom:
-          secretKeyRef:
-            name: {{ default (include "vaultwarden.fullname" .) .Values.sso.existingSecret }}
-            key: {{ default "SSO_CLIENT_ID" .Values.sso.clientId.existingSecretKey }}
-      {{- end }}
-      {{- if and .Values.sso.enabled (or (.Values.sso.clientId.value) (.Values.sso.clientSecret.existingSecretKey) )}}
-      - name: SSO_CLIENT_SECRET
-        valueFrom:
-          secretKeyRef:
-            name: {{ default (include "vaultwarden.fullname" .) .Values.sso.existingSecret }}
-            key: {{ default "SSO_CLIENT_SECRET" .Values.sso.clientSecret.existingSecretKey }}
       {{- end }}
       {{- if .Values.adminToken }}
       - name: ADMIN_TOKEN
@@ -177,7 +146,7 @@ containers:
       - containerPort: 8080
         name: http
         protocol: TCP
-    {{- if or (.Values.storage.existingVolumeClaim) (.Values.storage.data) (.Values.storage.attachments) (.Values.extraVolumeMounts) }}
+    {{- if or (.Values.storage.existingVolumeClaim) (.Values.storage.data) (.Values.extraVolumeMounts) }}
     volumeMounts:
     {{- end }}
     {{- if .Values.storage.existingVolumeClaim }}
@@ -186,14 +155,10 @@ containers:
         mountPath: {{ default "/data" .dataPath }}
       {{- end }}
     {{- else }}
-    {{- if or (.Values.storage.data) (.Values.storage.attachments) }}
+    {{- if .Values.storage.data }}
       {{- with .Values.storage.data }}
       - name: {{ .name }}
         mountPath: {{ default "/data" .path }}
-      {{- end }}
-      {{- with .Values.storage.attachments }}
-      - name: {{ .name }}
-        mountPath: {{ default "/data/attachments" .path }}
       {{- end }}
     {{- end }}
     {{- end }}
@@ -227,17 +192,6 @@ containers:
       timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
       successThreshold: {{ .Values.readinessProbe.successThreshold }}
       failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
-    {{- end }}
-    {{- if .Values.startupProbe.enabled }}
-    startupProbe:
-      httpGet:
-        path: {{ .Values.startupProbe.path }}
-        port: http
-      initialDelaySeconds: {{ .Values.startupProbe.initialDelaySeconds }}
-      periodSeconds: {{ .Values.startupProbe.periodSeconds }}
-      timeoutSeconds: {{ .Values.startupProbe.timeoutSeconds }}
-      successThreshold: {{ .Values.startupProbe.successThreshold }}
-      failureThreshold: {{ .Values.startupProbe.failureThreshold }}
     {{- end }}
     {{- with .Values.sidecars }}
     {{- toYaml . | nindent 2 }}

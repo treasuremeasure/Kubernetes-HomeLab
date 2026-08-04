@@ -24,14 +24,6 @@ If release name contains chart name it will be used as a full name.
 {{- end -}}
 
 {{/*
-Create a default fully qualified redis app name.
-We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
-*/}}
-{{- define "nextcloud.redis.fullname" -}}
-{{- printf "%s-redis" .Release.Name | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
-
-{{/*
 Create chart name and version as used by the chart label.
 */}}
 {{- define "nextcloud.chart" -}}
@@ -68,40 +60,6 @@ Create environment variables used to configure the nextcloud container as well a
 {{- if .Values.internalDatabase.enabled }}
 - name: SQLITE_DATABASE
   value: {{ .Values.internalDatabase.name | quote }}
-{{- else if .Values.mariadb.enabled }}
-- name: MYSQL_HOST
-  value: {{ template "mariadb.primary.fullname" .Subcharts.mariadb }}
-- name: MYSQL_DATABASE
-  value: {{ .Values.mariadb.auth.database | quote }}
-- name: MYSQL_USER
-  valueFrom:
-    secretKeyRef:
-      name: {{ .Values.externalDatabase.existingSecret.secretName | default (printf "%s-db" .Release.Name) }}
-      key: {{ .Values.externalDatabase.existingSecret.usernameKey }}
-- name: MYSQL_PASSWORD
-  valueFrom:
-    secretKeyRef:
-      name: {{ .Values.externalDatabase.existingSecret.secretName | default (printf "%s-db" .Release.Name) }}
-      key: {{ .Values.externalDatabase.existingSecret.passwordKey }}
-{{- else if .Values.postgresql.enabled }}
-- name: POSTGRES_HOST
-  value: {{ template "postgresql.v1.primary.fullname" .Subcharts.postgresql }}
-- name: POSTGRES_DB
-  {{- if .Values.postgresql.auth.database }}
-  value: {{ .Values.postgresql.auth.database | quote }}
-  {{ else }}
-  value: {{ .Values.postgresql.global.postgresql.auth.database | quote }}
-  {{- end }}
-- name: POSTGRES_USER
-  valueFrom:
-    secretKeyRef:
-      name: {{ .Values.externalDatabase.existingSecret.secretName | default (printf "%s-db" .Release.Name) }}
-      key: {{ .Values.externalDatabase.existingSecret.usernameKey }}
-- name: POSTGRES_PASSWORD
-  valueFrom:
-    secretKeyRef:
-      name: {{ .Values.externalDatabase.existingSecret.secretName | default (printf "%s-db" .Release.Name) }}
-      key: {{ .Values.externalDatabase.existingSecret.passwordKey }}
 {{- else }}
   {{- if eq .Values.externalDatabase.type "postgresql" }}
 - name: POSTGRES_HOST
@@ -192,24 +150,7 @@ Create environment variables used to configure the nextcloud container as well a
 {{/*
 Redis env vars
 */}}
-{{- if .Values.redis.enabled }}
-- name: REDIS_HOST
-  value: {{ template "nextcloud.redis.fullname" . }}-master
-- name: REDIS_HOST_PORT
-  value: {{ .Values.redis.master.service.ports.redis | quote }}
-{{- if .Values.redis.auth.enabled }}
-{{- if and .Values.redis.auth.existingSecret .Values.redis.auth.existingSecretPasswordKey }}
-- name: REDIS_HOST_PASSWORD
-  valueFrom:
-    secretKeyRef:
-      name: {{ .Values.redis.auth.existingSecret }}
-      key: {{ .Values.redis.auth.existingSecretPasswordKey }}
-{{- else }}
-- name: REDIS_HOST_PASSWORD
-  value: {{ .Values.redis.auth.password }}
-{{- end }}
-{{- end }}
-{{- else if .Values.externalRedis.enabled }}
+{{- if .Values.externalRedis.enabled }}
 - name: REDIS_HOST
   value: {{ .Values.externalRedis.host | quote }}
 - name: REDIS_HOST_PORT
