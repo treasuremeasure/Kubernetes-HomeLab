@@ -10,9 +10,6 @@ metadata:
     {{- include "labels" . | nindent 4 }}
   annotations:
     cert-manager.io/inject-ca-from-secret: {{ printf "%s/%s-ca" (include "cert-manager.namespace" .) (include "webhook.fullname" .) | quote }}
-    {{- with .Values.webhook.mutatingWebhookConfigurationAnnotations }}
-    {{- toYaml . | nindent 4 }}
-    {{- end }}
 webhooks:
   - name: webhook.cert-manager.io
     {{- with .Values.webhook.mutatingWebhookConfiguration.namespaceSelector }}
@@ -38,11 +35,7 @@ webhooks:
     # Only include 'sideEffects' field in Kubernetes 1.12+
     sideEffects: None
     clientConfig:
-      {{- if .Values.webhook.url.host }}
-      url: https://{{ .Values.webhook.url.host }}/mutate
-      {{- else }}
       service:
         name: {{ template "webhook.fullname" . }}
         namespace: {{ include "cert-manager.namespace" . }}
         path: /mutate
-      {{- end }}

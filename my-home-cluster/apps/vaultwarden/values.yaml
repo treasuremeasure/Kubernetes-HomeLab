@@ -1,3 +1,4 @@
+## Vaultwarden configuration
 ## Instruction: when adding a new value, follow https://github.com/dani-garcia/vaultwarden/blob/main/.env.template as much as possible.
 
 ## @section Kubernetes settings
@@ -19,7 +20,6 @@ replicas: 1
 fullnameOverride: ""
 
 ## @param resourceType Can be either Deployment or StatefulSet
-## Overwrite automatic resource type detection by specifying the resource type
 resourceType: ""
 
 ## @param commonAnnotations Annotations for the deployment or statefulset
@@ -78,7 +78,6 @@ securityContext:
 ## @param dnsConfig Pod DNS options
 dnsConfig: {}
 
-## Extra objects
 extraObjects: []
 
 
@@ -113,7 +112,6 @@ resources:
   # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
 
 ## @section Persistent data configuration
-
 
 storage:
   existingVolumeClaim:

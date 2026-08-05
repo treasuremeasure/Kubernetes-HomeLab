@@ -115,23 +115,6 @@ spec:
           {{- end }}
           {{- end }}
           - --acme-http01-solver-image={{ template "image" (tuple .Values.acmesolver.image .Values.imageRegistry .Values.imageNamespace (printf ":%s" .Chart.AppVersion)) }}
-          {{- with .Values.extraArgs }}
-          {{- toYaml . | nindent 10 }}
-          {{- end }}
-          {{- with .Values.ingressShim }}
-          {{- if .defaultIssuerName }}
-          - --default-issuer-name={{ .defaultIssuerName }}
-          {{- end }}
-          {{- if .defaultIssuerKind }}
-          - --default-issuer-kind={{ .defaultIssuerKind }}
-          {{- end }}
-          {{- if .defaultIssuerGroup }}
-          - --default-issuer-group={{ .defaultIssuerGroup }}
-          {{- end }}
-          {{- end }}
-          {{- if .Values.featureGates }}
-          - --feature-gates={{ .Values.featureGates }}
-          {{- end }}
           {{- if .Values.maxConcurrentChallenges }}
           - --max-concurrent-challenges={{ .Values.maxConcurrentChallenges }}
           {{- end }}
