@@ -102,11 +102,7 @@ spec:
             - name: VAULT_ADDR
               value: "{{ include "vault.scheme" . }}://127.0.0.1:8200"
             - name: VAULT_API_ADDR
-              {{- if .Values.server.ha.apiAddr }}
-              value: {{ .Values.server.ha.apiAddr }}
-              {{- else }}
               value: "{{ include "vault.scheme" . }}://$(POD_IP):8200"
-              {{- end }}
             - name: SKIP_CHOWN
               value: "true"
             - name: SKIP_SETCAP
@@ -116,17 +112,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.name
             - name: VAULT_CLUSTER_ADDR
-              {{- if .Values.server.ha.clusterAddr }}
-              value: {{ .Values.server.ha.clusterAddr | quote }}
-              {{- else }}
               value: "https://$(HOSTNAME).{{ template "vault.fullname" . }}-internal:8201"
-              {{- end }}
-            {{- if and (eq (.Values.server.ha.raft.enabled | toString) "true") (eq (.Values.server.ha.raft.setNodeId | toString) "true") }}
-            - name: VAULT_RAFT_NODE_ID
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-            {{- end }}
             - name: HOME
               value: "/home/vault"
             {{- if .Values.server.logLevel }}
@@ -136,10 +122,6 @@ spec:
             {{- if .Values.server.logFormat }}
             - name: VAULT_LOG_FORMAT
               value: "{{ .Values.server.logFormat }}"
-            {{- end }}
-            {{- if (and .Values.server.enterpriseLicense.secretName .Values.server.enterpriseLicense.secretKey) }}
-            - name: VAULT_LICENSE_PATH
-              value: /vault/license/{{ .Values.server.enterpriseLicense.secretKey }}
             {{- end }}
             {{ template "vault.envs" . }}
             {{- include "vault.extraEnvironmentVars" .Values.server | nindent 12 }}

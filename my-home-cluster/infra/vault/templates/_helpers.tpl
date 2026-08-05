@@ -149,10 +149,6 @@ template logic.
     {{- $_ := set . "mode" "external" -}}
   {{- else if not .serverEnabled -}}
     {{- $_ := set . "mode" "external" -}}
-  {{- else if eq (.Values.server.dev.enabled | toString) "true" -}}
-    {{- $_ := set . "mode" "dev" -}}
-  {{- else if eq (.Values.server.ha.enabled | toString) "true" -}}
-    {{- $_ := set . "mode" "ha" -}}
   {{- else if or (eq (.Values.server.standalone.enabled | toString) "true") (eq (.Values.server.standalone.enabled | toString) "-") -}}
     {{- $_ := set . "mode" "standalone" -}}
   {{- else -}}
@@ -201,12 +197,6 @@ extra volumes the user may have specified (such as a secret with TLS).
   {{- if .Values.server.volumes }}
     {{- toYaml .Values.server.volumes | nindent 8}}
   {{- end }}
-  {{- if (and .Values.server.enterpriseLicense.secretName .Values.server.enterpriseLicense.secretKey) }}
-        - name: vault-license
-          secret:
-            secretName: {{ .Values.server.enterpriseLicense.secretName }}
-            defaultMode: 0440
-  {{- end }}
 {{- end -}}
 
 {{/*
@@ -248,17 +238,13 @@ Set's which additional volumes should be mounted to the container
 based on the mode configured.
 */}}
 {{- define "vault.mounts" -}}
-  {{ if eq (.Values.server.auditStorage.enabled | toString) "true" }}
-            - name: audit
-              mountPath: {{ .Values.server.auditStorage.mountPath }}
-  {{ end }}
-  {{ if or (eq .mode "standalone") (and (eq .mode "ha") (eq (.Values.server.ha.raft.enabled | toString) "true"))  }}
+  {{ if eq .mode "standalone" }}
     {{ if eq (.Values.server.dataStorage.enabled | toString) "true" }}
             - name: data
               mountPath: {{ .Values.server.dataStorage.mountPath }}
     {{ end }}
   {{ end }}
-  {{ if and (ne .mode "dev") (or (.Values.server.standalone.config)  (.Values.server.ha.config)) }}
+  {{ if .Values.server.standalone.config }}
             - name: config
               mountPath: /vault/config
   {{ end }}
@@ -269,11 +255,6 @@ based on the mode configured.
   {{- end }}
   {{- if .Values.server.volumeMounts }}
     {{- toYaml .Values.server.volumeMounts | nindent 12}}
-  {{- end }}
-  {{- if (and .Values.server.enterpriseLicense.secretName .Values.server.enterpriseLicense.secretKey) }}
-            - name: vault-license
-              mountPath: /vault/license
-              readOnly: true
   {{- end }}
 {{- end -}}
 
@@ -300,23 +281,6 @@ storage might be desired by the user.
             storage: {{ .Values.server.dataStorage.size }}
           {{- if .Values.server.dataStorage.storageClass }}
         storageClassName: {{ .Values.server.dataStorage.storageClass }}
-          {{- end }}
-      {{ end }}
-      {{- if eq (.Values.server.auditStorage.enabled | toString) "true" }}
-    - apiVersion: v1
-      kind: PersistentVolumeClaim
-      metadata:
-        name: audit
-        {{- include "vault.auditVolumeClaim.annotations" . | nindent 6 }}
-        {{- include "vault.auditVolumeClaim.labels" . | nindent 6 }}
-      spec:
-        accessModes:
-          - {{ .Values.server.auditStorage.accessMode | default "ReadWriteOnce" }}
-        resources:
-          requests:
-            storage: {{ .Values.server.auditStorage.size }}
-          {{- if .Values.server.auditStorage.storageClass }}
-        storageClassName: {{ .Values.server.auditStorage.storageClass }}
           {{- end }}
       {{ end }}
   {{ end }}
@@ -1104,11 +1068,8 @@ Supported inputs are Values.ui
 config file from values
 */}}
 {{- define "vault.config" -}}
-{{- if or (eq .mode "ha") (eq .mode "standalone") }}
+{{- if eq .mode "standalone" }}
 {{- $config := (index .Values.server .mode).config -}}
-{{- if .Values.server.ha.raft.enabled -}}
-{{- $config = .Values.server.ha.raft.config -}}
-{{- end -}}
 {{- $type := typeOf $config -}}
 {{- if eq $type "string" -}}
 {{/* Vault supports both HCL and JSON as its configuration format */}}
