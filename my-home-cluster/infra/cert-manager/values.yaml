@@ -2,7 +2,8 @@
 
 global:
   imagePullSecrets: []
-  nodeSelector: {}
+  nodeSelector: 
+    kubernetes.io/hostname: server2
   commonLabels: {}
   priorityClassName: ""
 
