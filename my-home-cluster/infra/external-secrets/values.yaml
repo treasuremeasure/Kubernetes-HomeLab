@@ -1,7 +1,7 @@
 ---
 global:
-  nodeSelector: 
-    - kubernetes.io/hostname: server2
+  nodeSelector:
+    kubernetes.io/hostname: server2
   tolerations: []
   topologySpreadConstraints: []
   affinity: {}
