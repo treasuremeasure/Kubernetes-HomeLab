@@ -839,7 +839,7 @@ redis:
     enabled: false
 
   image:
-    repository: ecr-public.aws.com/docker/library/redis
+    repository:  redis
     tag: 8.2.3-alpine
     imagePullPolicy: ""
 
