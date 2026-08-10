@@ -78,7 +78,7 @@ global:
   priorityClassName: ""
 
   nodeSelector:
-    kubernetes.io/os: linux
+    kubernetes.io/hostname: server2
 
   tolerations: []
 
