@@ -24,8 +24,8 @@ crds:
   createPushSecret: true
 
 imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
+nameOverride: infra-external-secrets
+fullnameOverride: infra-external-secrets
 namespaceOverride: ""
 
 commonLabels: {}

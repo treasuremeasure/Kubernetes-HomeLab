@@ -426,12 +426,12 @@ extraObjects:
       - kind: ServiceAccount
         name: argocd-application-controller
         namespace: infra-argocd
-  # Role for infra-vault namespace
+  # Role for app-vault namespace
   - apiVersion: rbac.authorization.k8s.io/v1
     kind: Role
     metadata:
       name: argocd-deployer-1
-      namespace: infra-vault
+      namespace: app-vault
     rules:
       - apiGroups:
           - '*'
@@ -439,12 +439,12 @@ extraObjects:
           - '*'
         verbs:
           - '*'
-  # RoleBinding for infra-vault namespace
+  # RoleBinding for app-vault namespace
   - apiVersion: rbac.authorization.k8s.io/v1
     kind: RoleBinding
     metadata:
       name: argocd-deployer-binding-1
-      namespace: infra-vault
+      namespace: app-vault
     roleRef:
       apiGroup: rbac.authorization.k8s.io
       kind: Role
@@ -667,7 +667,7 @@ controller:
   # These rules will be applied to the argocd namespace and managed namespaces
   roleRules:
     # Full permissions for managing resources in application namespaces
-    # (equivalent to argocd-deployer roles for app-nextcloud and infra-vault)
+    # (equivalent to argocd-deployer roles for app-nextcloud and app-vault)
     - apiGroups:
         - '*'
       resources:

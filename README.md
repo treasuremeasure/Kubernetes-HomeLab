@@ -115,7 +115,7 @@ Automates the lifecycle of TLS certificates using a custom internal Certificate 
 **Version**: 1.21.2
 **Mode**: Standalone with integrated storage
 **Domain**: `vault.kube.home`
-**Namespace**: `infra-vault`
+**Namespace**: `app-vault`
 
 Centralized secrets store for sensitive data (credentials, API keys, certificates).
 
@@ -262,13 +262,13 @@ cd Kubernetes-HomeLab
 cd my-home-cluster/infra
 
 # 1. Deploy Vault first (secrets foundation)
-helm install vault ./vault -n infra-vault --create-namespace
+helm install vault ./vault -n app-vault --create-namespace
 
 # 2. Deploy Cert-Manager (certificate foundation)
 helm install cert-manager ./cert-manager -n infra-cert-manager --create-namespace
 
 # 3. Deploy External Secrets Operator
-helm install external-secrets ./external-secrets -n infra-external-secrets --create-namespace
+helm install infra-external-secrets ./external-secrets -n infra-external-secrets --create-namespace
 
 # 4. Deploy ArgoCD (GitOps controller)
 helm install argocd ./argocd -n infra-argocd --create-namespace
@@ -290,7 +290,7 @@ After Vault deployment, it must be initialized and unsealed:
 
 ```bash
 # Port-forward to Vault pod
-kubectl port-forward -n infra-vault svc/vault 8200:8200
+kubectl port-forward -n app-vault svc/vault 8200:8200
 
 # Initialize (save the unseal keys and root token!)
 vault operator init
@@ -404,7 +404,7 @@ kubectl exec -n app-nextcloud deployment/nextcloud -- tar czf - /var/www/html/da
 kubectl exec -n app-vaultwarden deployment/vaultwarden -- tar czf - /data > vaultwarden-backup-$(date +%Y%m%d).tar.gz
 
 # Vault data (requires Vault to be sealed first for consistency)
-kubectl exec -n infra-vault vault-0 -- tar czf - /vault/data > vault-backup-$(date +%Y%m%d).tar.gz
+kubectl exec -n app-vault vault-0 -- tar czf - /vault/data > vault-backup-$(date +%Y%m%d).tar.gz
 ```
 
 #### Configuration Backup
@@ -432,7 +432,7 @@ kubectl get secret -n infra-cert-manager homelab-root-ca-secret -o yaml > ca-bac
 kubectl exec -n app-nextcloud deployment/nextcloud -- tar xzf - -C / < nextcloud-backup-20240815.tar.gz
 
 # Restore Vault from backup
-kubectl exec -n infra-vault vault-0 -- tar xzf - -C / < vault-backup-20240815.tar.gz
+kubectl exec -n app-vault vault-0 -- tar xzf - -C / < vault-backup-20240815.tar.gz
 # Then unseal Vault with original unseal keys
 ```
 
@@ -491,16 +491,16 @@ argocd app logs nextcloud
 
 ```bash
 # Check Vault status
-kubectl exec -n infra-vault vault-0 -- vault status
+kubectl exec -n app-vault vault-0 -- vault status
 
 # Unseal Vault after pod restart
-kubectl exec -n infra-vault vault-0 -- vault operator unseal <key>
+kubectl exec -n app-vault vault-0 -- vault operator unseal <key>
 
 # List secrets
-kubectl exec -n infra-vault vault-0 -- vault kv list secret/
+kubectl exec -n app-vault vault-0 -- vault kv list secret/
 
 # Read a secret
-kubectl exec -n infra-vault vault-0 -- vault kv get secret/nextcloud/admin
+kubectl exec -n app-vault vault-0 -- vault kv get secret/nextcloud/admin
 ```
 
 ### Certificate Debugging
@@ -526,7 +526,7 @@ kubectl get externalsecrets --all-namespaces
 kubectl describe externalsecret nextcloud-secret -n app-nextcloud
 
 # Check operator logs
-kubectl logs -n infra-external-secrets deployment/external-secrets
+kubectl logs -n infra-external-secrets deployment/infra-external-secrets
 ```
 
 ### Troubleshooting
