@@ -1,0 +1,38 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: cluster-apps
+  namespace: infra-argocd
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+  - git:
+      repoURL: https://github.com/treasuremeasure/Kubernetes-HomeLab
+      revision: HEAD
+      directories:
+			  - path: apps/*
+        - path: infra/*
+  template:
+    metadata:
+      name: '{{.path.basename}}'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/treasuremeasure/Kubernetes-HomeLab
+        targetRevision: HEAD
+        path: '{{.path.path}}'
+      destination:
+        server: https://kubernetes.default.svc
+				namespace: >-
+          {{- if eq (index .path.segments 0) "apps" -}}
+          app-{{ .path.basename }}
+          {{- else if eq (index .path.segments 0) "infra" -}}
+          infra-{{ .path.basename }}
+          {{- else -}}
+          {{ .path.basename }}
+          {{- end -}}
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
