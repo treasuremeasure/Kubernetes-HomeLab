@@ -1,3 +1,4 @@
+---
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
@@ -5,14 +6,14 @@ metadata:
   namespace: infra-argocd
 spec:
   goTemplate: true
-  goTemplateOptions: ["missingkey=error"]
+  goTemplateOptions: [missingkey=error]
   generators:
-  - git:
-      repoURL: https://github.com/treasuremeasure/Kubernetes-HomeLab
-      revision: HEAD
-      directories:
-      - path: my-home-cluster/apps/*
-      - path: my-home-cluster/infra/*
+    - git:
+        repoURL: https://github.com/treasuremeasure/Kubernetes-HomeLab
+        revision: HEAD
+        directories:
+          - path: my-home-cluster/apps/*
+          - path: my-home-cluster/infra/*
   template:
     metadata:
       name: '{{.path.basename}}'
