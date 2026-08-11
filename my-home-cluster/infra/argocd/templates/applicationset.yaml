@@ -11,8 +11,8 @@ spec:
       repoURL: https://github.com/treasuremeasure/Kubernetes-HomeLab
       revision: HEAD
       directories:
-			  - path: apps/*
-        - path: infra/*
+      - path: my-home-cluster/apps/*
+      - path: my-home-cluster/infra/*
   template:
     metadata:
       name: '{{.path.basename}}'
@@ -24,10 +24,10 @@ spec:
         path: '{{.path.path}}'
       destination:
         server: https://kubernetes.default.svc
-				namespace: >-
-          {{- if eq (index .path.segments 0) "apps" -}}
+        namespace: >-
+          {{- if eq (index .path.segments 1) "apps" -}}
           app-{{ .path.basename }}
-          {{- else if eq (index .path.segments 0) "infra" -}}
+          {{- else if eq (index .path.segments 1) "infra" -}}
           infra-{{ .path.basename }}
           {{- else -}}
           {{ .path.basename }}
