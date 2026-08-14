@@ -165,9 +165,16 @@ image:
   pullPolicy: IfNotPresent
   tag: ""
 
+certController:
+  create: false
+
 webhook:
   annotations: {}
   create: true
+  secretName: "external-secrets-webhook-tls"
+  certManager:
+    enabled: true 
+    addInjectorAnnotations: true
   certCheckInterval: "5m"
   replicaCount: 1
 
