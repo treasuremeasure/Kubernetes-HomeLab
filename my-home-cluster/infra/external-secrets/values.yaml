@@ -171,22 +171,22 @@ certController:
 webhook:
   create: true
   secretName: "external-secrets-webhook-tls"
+  certDir: /tmp/certs
   certManager:
-    enabled: false 
+    enabled: true
     addInjectorAnnotations: true
   certCheckInterval: "5m"
   replicaCount: 1
 
   webhookAnnotations:
-    cert-manager.io/inject-ca-from: "infra-external-secrets/external-secrets-webhook"
+    cert-manager.io/inject-ca-from: "infra-external-secrets/infra-external-secrets-webhook"
   annotations:
-    cert-manager.io/inject-ca-from: "infra-external-secrets/external-secrets-webhook"
+    cert-manager.io/inject-ca-from: "infra-external-secrets/infra-external-secrets-webhook"
 
   log:
     level: info
     timeEncoding: epoch
 
-  certDir: /tmp/certs
   failurePolicy: Fail
   hostNetwork: false
 
