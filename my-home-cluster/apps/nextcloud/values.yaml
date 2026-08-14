@@ -41,10 +41,15 @@ httpRoute:
 ## ref: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ingress:
     enabled: true
+    className: traefik
     annotations: {}
     labels: {}
     path: /
     pathType: Prefix
+    tls:
+        - hosts:
+            - nextcloud.kube.home
+          secretName: nextcloud-tls
 
 nextcloud:
     host: nextcloud.kube.home
@@ -143,10 +148,6 @@ nextcloud:
     extraInitContainers: []
     # Extra sidecar containers.
     extraSidecarContainers: []
-    extraVolumes:
-      - name: nextcloud-tls
-        secret:
-          secretName: nextcloud-tls
     extraVolumeMounts: null
     # Set securityContext parameters for the nextcloud CONTAINER only (will not affect nginx container).
     securityContext: {}
