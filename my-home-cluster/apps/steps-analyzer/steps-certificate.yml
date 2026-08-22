@@ -8,8 +8,8 @@ spec:
   renewBefore: 360h             
   dnsNames:
     - steps.kube.home
-    - app-steps-analyzer.svc.cluster.local
-    - app-steps-analzyer.svc
+    - steps-analyzer.app-steps-analyzer.svc.cluster.local
+    - steps-analyzer.app-steps-analyzer.svc
   ipAddresses:
     - 127.0.0.1
   issuerRef:
