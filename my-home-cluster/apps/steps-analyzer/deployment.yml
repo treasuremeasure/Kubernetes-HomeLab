@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: steps-analyzer
+  name: steps-analyzer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: steps-analyzer
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: steps-analyzer
+    spec:
+      containers:
+      - image: treasuremeasure/steps-analyzer:1.0.0
+        name: steps-analyzer
+        volumeMounts:
+        - name: steps-analyzer-volume
+          mountPath: /usr/steps-analyzer
+      volumes:
+      - name: steps-analyzer-volume
+        persistentVolumeClaim:
+          claimName: steps-analyzer-pvc
+

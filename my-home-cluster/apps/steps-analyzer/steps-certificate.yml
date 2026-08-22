@@ -1,0 +1,17 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: steps-tls
+spec:
+  secretName: steps-tls
+  duration: 2160h               
+  renewBefore: 360h             
+  dnsNames:
+    - steps.kube.home
+    - app-steps-analyzer.svc.cluster.local
+    - app-steps-analzyer.svc
+  ipAddresses:
+    - 127.0.0.1
+  issuerRef:
+    name: homelab-ca
+    kind: ClusterIssuer
