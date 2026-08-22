@@ -375,7 +375,8 @@ hpa:
     cputhreshold: 60
     minPods: 1
     maxPods: 10
-nodeSelector: {}
+nodeSelector: 
+    kubernetes.io/hostname: server2
 tolerations: []
 topologySpreadConstraints: []
 affinity: {}

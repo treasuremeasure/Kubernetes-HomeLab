@@ -50,7 +50,8 @@ extraVolumes: []
 extraVolumeMounts: []
 
 ## @param nodeSelector Node labels for pod assignment
-nodeSelector: {}
+nodeSelector: 
+  kubernetes.io/hostname: server2
 
 ## @param affinity Affinity for pod assignment
 affinity: {}
