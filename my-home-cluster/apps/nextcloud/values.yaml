@@ -331,7 +331,7 @@ service:
 ## Enable persistence using Persistent Volume Claims
 ## ref: https://kubernetes.io/docs/concepts/storage/persistent-volumes/
 persistence:
-    enabled: false
+    enabled: true 
     annotations: {}
     labels: {}
     accessMode: ReadWriteOnce
