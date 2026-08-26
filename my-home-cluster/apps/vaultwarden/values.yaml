@@ -115,10 +115,7 @@ resources:
 ## @section Persistent data configuration
 
 storage: 
-  existingVolumeClaim: 
-    claimName: "vaultwarden-pvc"
-    dataPath: "/data"
-
+  existingVolumeClaim: {} 
   data: 
      name: "vaultwarden-data"
      size: "3Gi"
