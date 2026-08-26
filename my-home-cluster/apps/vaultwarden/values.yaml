@@ -115,17 +115,17 @@ resources:
 ## @section Persistent data configuration
 
 storage: 
-  existingVolumeClaim: {}
- #   claimName: "vaultwarden-pvc"
- #     dataPath: "/data"
+  existingVolumeClaim: 
+    claimName: "vaultwarden-pvc"
+    dataPath: "/data"
 
-  data: {}
-#    name: "vaultwarden-data"
-#    size: "3Gi"
-#    class: ""
-#    path: "/data"
-#    keepPvc: false
-#    accessMode: "ReadWriteOnce"
+  data: 
+     name: "vaultwarden-data"
+     size: "3Gi"
+     class: ""
+     path: "/data"
+     keepPvc: false
+     accessMode: "ReadWriteOnce"
 
 ## @param webVaultEnabled Enable Web Vault
 webVaultEnabled: "true"
