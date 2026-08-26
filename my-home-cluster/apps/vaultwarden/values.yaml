@@ -119,9 +119,9 @@ storage:
   data: 
      name: "vaultwarden-data"
      size: "3Gi"
-     class: ""
+     class: "local-path-server2"
      path: "/data"
-     keepPvc: false
+     keepPvc: true
      accessMode: "ReadWriteOnce"
 
 ## @param webVaultEnabled Enable Web Vault
