@@ -61,7 +61,7 @@ nodeSelector:
   kubernetes.io/os: linux
 
 networkPolicy:
-  enabled: false
+  enabled: true
   ingress:
   - ports:
     - port: http-metrics
@@ -69,16 +69,23 @@ networkPolicy:
     - port: http-healthz
       protocol: TCP
   egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: kube-system
+    ports:
+    - port: 53
+      protocol: UDP
+    - port: 53
+      protocol: TCP
   - ports:
     - port: 80
       protocol: TCP
     - port: 443
       protocol: TCP
-    - port: 53
-      protocol: TCP
-    - port: 53
-      protocol: UDP
     - port: 6443
+      protocol: TCP
+    - port: 10250
       protocol: TCP
 
 affinity: {}
@@ -187,7 +194,7 @@ webhook:
   serviceType: ClusterIP
 
   networkPolicy:
-    enabled: false
+    enabled: true
     ingress:
     - ports:
       - port: https
@@ -197,15 +204,20 @@ webhook:
       - port: http-metrics
         protocol: TCP
     egress:
+    - to:
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: kube-system
+      ports:
+      - port: 53
+        protocol: UDP
+      - port: 53
+        protocol: TCP
     - ports:
       - port: 80
         protocol: TCP
       - port: 443
         protocol: TCP
-      - port: 53
-        protocol: TCP
-      - port: 53
-        protocol: UDP
       - port: 6443
         protocol: TCP
 
@@ -228,21 +240,26 @@ cainjector:
     readOnlyRootFilesystem: true
 
   networkPolicy:
-    enabled: false
+    enabled: true
     ingress:
     - ports:
       - port: http-metrics
         protocol: TCP
     egress:
+    - to:
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: kube-system
+      ports:
+      - port: 53
+        protocol: UDP
+      - port: 53
+        protocol: TCP
     - ports:
       - port: 80
         protocol: TCP
       - port: 443
         protocol: TCP
-      - port: 53
-        protocol: TCP
-      - port: 53
-        protocol: UDP
       - port: 6443
         protocol: TCP
 
