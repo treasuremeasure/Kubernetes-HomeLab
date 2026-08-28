@@ -303,8 +303,8 @@ hostAliases: []
   #     - "my.host.com"
 
 ingress:
-  enabled: false
-  # ingressClassName: nginx
+  enabled: true 
+  ingressClassName: traefik
   # Values can be templated
   annotations: {}
     # kubernetes.io/ingress.class: nginx
@@ -314,17 +314,16 @@ ingress:
   pathType: Prefix
 
   hosts:
-    - chart-example.local
+    - grafana.kube.home
   ## Extra paths to prepend to every host configuration. This is useful when working with annotation based services.
-  extraPaths: []
-  # - path: /*
-  #   pathType: Prefix
-  #   backend:
-  #     service:
-  #       name: ssl-redirect
-  #       port:
-  #         name: use-annotation
-
+  extraPaths: 
+    - path: /
+      pathType: Prefix
+      backend:
+        service:
+          name: grafana
+          port:
+            number: 80
 
   tls: []
   #  - secretName: chart-example-tls
