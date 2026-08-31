@@ -497,6 +497,13 @@ extraContainerVolumes: []
 ## Enable persistence using Persistent Volume Claims
 ## ref: https://kubernetes.io/docs/concepts/storage/persistent-volumes/
 ##
+
+extraVolumeMounts:
+  - name: shared-db-volume
+    mountPath: /var/lib/steps-db 
+    readOnly: true
+
+
 persistence:
   type: pvc
   enabled: true
