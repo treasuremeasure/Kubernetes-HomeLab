@@ -499,28 +499,28 @@ extraContainerVolumes: []
 ##
 persistence:
   type: pvc
-  enabled: false
+  enabled: true
   # storageClassName: default
   ## (Optional) Use this to bind the claim to an existing PersistentVolume (PV) by name.
-  volumeName: ""
-  accessModes:
-    - ReadWriteOnce
-  size: 10Gi
+  # volumeName: ""
+  # accessModes:
+    # - ReadWriteOnce
+      #  size: 10Gi
   # annotations: {}
-  finalizers:
-    - kubernetes.io/pvc-protection
+  #finalizers:
+  # - kubernetes.io/pvc-protection
   # selectorLabels: {}
   ## Sub-directory of the PV to mount. Can be templated.
   # subPath: ""
   ## Name of an existing PVC. Can be templated.
-  # existingClaim:
+  existingClaim: "steps-analyzer-pvc"
   ## Extra labels to apply to a PVC.
-  extraPvcLabels: {}
-  disableWarning: false
+  #extraPvcLabels: {}
+  # disableWarning: false
   ## Configure StatefulSet persistent volume claim retention policy.
   ## This is ignored when Grafana is configured to use a Deployment with a PVC.
   ## By default, Kubernetes uses Retain for both whenDeleted and whenScaled.
-  persistentVolumeClaimRetentionPolicy: {}
+  # persistentVolumeClaimRetentionPolicy: {}
   #  whenDeleted: Retain
   #  whenScaled: Retain
 
