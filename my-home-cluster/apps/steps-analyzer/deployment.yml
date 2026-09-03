@@ -17,14 +17,65 @@ spec:
     spec:
       nodeSelector:
         kubernetes.io/hostname: server2
+      initContainers:
+        - name: flyway-migration
+          image: flyway/flyway:10-alpine
+          args:
+            - "-url=jdbc:postgresql://steps-postgres:5432/$(POSTGRES_DB)"
+            - "-user=$(POSTGRES_USER)"
+            - "-password=$(POSTGRES_PASSWORD)"
+            - "-locations=filesystem:/flyway/sql"
+            - "-connectRetries=60"
+            - "migrate"
+          env:
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: steps-postgres-secret
+                  key: POSTGRES_DB
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: steps-postgres-secret
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: steps-postgres-secret
+                  key: POSTGRES_PASSWORD
+          volumeMounts:
+            - name: migrations
+              mountPath: /flyway/sql
       containers:
-      - image: treasuremeasure/steps-analyzer:1.0.0
-        name: steps-analyzer
-        volumeMounts:
-        - name: steps-analyzer-volume
-          mountPath: /usr/steps-analyzer
+        - image: treasuremeasure/steps-analyzer:1.0.0
+          name: steps-analyzer
+          env:
+            - name: POSTGRES_HOST
+              value: "steps-postgres"
+            - name: POSTGRES_PORT
+              value: "5432"
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: steps-postgres-secret
+                  key: POSTGRES_DB
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: steps-postgres-secret
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: steps-postgres-secret
+                  key: POSTGRES_PASSWORD
+          ports:
+            - containerPort: 8000
+              name: http
       volumes:
-      - name: steps-analyzer-volume
-        persistentVolumeClaim:
-          claimName: steps-analyzer-pvc
+        - name: migrations
+          configMap:
+            name: flyway-migrations
+
+
 

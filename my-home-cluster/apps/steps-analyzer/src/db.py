@@ -1,64 +1,82 @@
-import aiosqlite
-from datetime import date, datetime
-from pathlib import Path
+import os
 
-DB_PATH = Path(__file__).parent / "steps.db"
+import asyncpg
+from datetime import date
 
-_db: aiosqlite.Connection | None = None
+_pool: asyncpg.Pool | None = None
+
+POSTGRES_HOST = os.getenv("POSTGRES_HOST", "steps-postgres")
+POSTGRES_PORT = int(os.getenv("POSTGRES_PORT", "5432"))
+POSTGRES_DB = os.getenv("POSTGRES_DB", "steps_db")
+POSTGRES_USER = os.getenv("POSTGRES_USER", "steps_user")
+POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD", "steps_password")
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 
-async def get_db() -> aiosqlite.Connection:
-    global _db
-    if _db is None:
-        raise RuntimeError("Database not initialised. Call init_db() first.")
-    return _db
+async def get_pool() -> asyncpg.Pool:
+    global _pool
+    if _pool is None:
+        raise RuntimeError("Database pool not initialised. Call init_db() first.")
+    return _pool
 
 
 async def init_db() -> None:
-    global _db
-    _db = await aiosqlite.connect(str(DB_PATH))
-    _db.row_factory = aiosqlite.Row
+    global _pool
+    if DATABASE_URL:
+        _pool = await asyncpg.create_pool(dsn=DATABASE_URL, min_size=1, max_size=10)
+    else:
+        _pool = await asyncpg.create_pool(
+            host=POSTGRES_HOST,
+            port=POSTGRES_PORT,
+            database=POSTGRES_DB,
+            user=POSTGRES_USER,
+            password=POSTGRES_PASSWORD,
+            min_size=1,
+            max_size=10,
+        )
 
-    await _db.execute("PRAGMA journal_mode=WAL;")
-    await _db.execute("PRAGMA foreign_keys=ON;")
-
-    await _db.execute(
-        """
-        CREATE TABLE IF NOT EXISTS steps (
-            id         INTEGER PRIMARY KEY AUTOINCREMENT,
-            date       TEXT    NOT NULL UNIQUE,
-            steps      INTEGER NOT NULL CHECK (steps >= 0 AND steps <= 500000),
-            created_at TEXT    NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))
-        );
-        """
-    )
-    await _db.commit()
+    async with _pool.acquire() as conn:
+        await conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS steps (
+                id         SERIAL PRIMARY KEY,
+                date       DATE NOT NULL UNIQUE,
+                steps      INTEGER NOT NULL CHECK (steps >= 0 AND steps <= 500000),
+                created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+            );
+            """
+        )
 
 
 async def close_db() -> None:
-    global _db
-    if _db is not None:
-        await _db.close()
-        _db = None
+    global _pool
+    if _pool is not None:
+        await _pool.close()
+        _pool = None
 
 
 async def insert_steps(step_date: date, steps: int) -> dict:
-    db = await get_db()
+    pool = await get_pool()
     date_str = step_date.isoformat()
-    created_at = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
 
     try:
-        cursor = await db.execute(
-            "INSERT INTO steps (date, steps, created_at) VALUES (?, ?, ?)",
-            (date_str, steps, created_at),
-        )
-        await db.commit()
-    except aiosqlite.IntegrityError:
+        async with pool.acquire() as conn:
+            row = await conn.fetchrow(
+                """
+                INSERT INTO steps (date, steps)
+                VALUES ($1, $2)
+                RETURNING id, date, steps, created_at;
+                """,
+                step_date,
+                steps,
+            )
+    except asyncpg.UniqueViolationError:
         raise ValueError(f"Record for date {date_str} already exists")
 
     return {
-        "id": cursor.lastrowid,
-        "date": date_str,
-        "steps": steps,
-        "created_at": created_at,
+        "id": row["id"],
+        "date": row["date"].isoformat(),
+        "steps": row["steps"],
+        "created_at": row["created_at"].isoformat(),
     }
+

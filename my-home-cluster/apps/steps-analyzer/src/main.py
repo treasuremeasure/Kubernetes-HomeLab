@@ -1,11 +1,9 @@
 from fastapi import FastAPI, HTTPException
-
-
 from pydantic import BaseModel, field_validator
 from datetime import date
 from contextlib import asynccontextmanager
 
-from db import init_db, close_db, insert_steps
+from db import init_db, close_db, insert_steps, get_pool
 
 
 @asynccontextmanager
@@ -39,6 +37,17 @@ class StepData(BaseModel):
         return v
 
 
+@app.get("/healthz")
+async def healthz():
+    try:
+        pool = await get_pool()
+        async with pool.acquire() as conn:
+            await conn.execute("SELECT 1;")
+        return {"status": "ok"}
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=str(e))
+
+
 @app.post("/api/v1/ingest", status_code=201)
 async def ingest_steps(data: StepData):
     try:
@@ -47,3 +56,4 @@ async def ingest_steps(data: StepData):
         raise HTTPException(status_code=409, detail=str(e))
 
     return {"status": "ok", "record": record}
+
