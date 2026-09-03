@@ -47,7 +47,7 @@ spec:
             - name: migrations
               mountPath: /flyway/sql
       containers:
-        - image: treasuremeasure/steps-analyzer:1.0.0
+        - image: treasuremeasure/steps-analyzer:1.1.0
           name: steps-analyzer
           env:
             - name: POSTGRES_HOST
