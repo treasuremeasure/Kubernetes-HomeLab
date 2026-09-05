@@ -498,15 +498,10 @@ extraContainerVolumes: []
 ## ref: https://kubernetes.io/docs/concepts/storage/persistent-volumes/
 ##
 
-extraVolumeMounts:
-  - name: shared-db-volume
-    mountPath: /var/lib/steps-db 
-    readOnly: true
-
 
 persistence:
   type: pvc
-  enabled: true
+  enabled: false
   # storageClassName: default
   ## (Optional) Use this to bind the claim to an existing PersistentVolume (PV) by name.
   # volumeName: ""
@@ -520,7 +515,6 @@ persistence:
   ## Sub-directory of the PV to mount. Can be templated.
   # subPath: ""
   ## Name of an existing PVC. Can be templated.
-  existingClaim: "steps-analyzer-pvc"
   ## Extra labels to apply to a PVC.
   #extraPvcLabels: {}
   # disableWarning: false
