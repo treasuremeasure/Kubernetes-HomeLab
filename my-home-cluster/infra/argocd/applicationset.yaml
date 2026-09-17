@@ -25,9 +25,8 @@ spec:
         path: '{{.path.path}}'
         helm:
           skipBuildDependencies: false
-        helm:
           valueFiles:
-            - values.yaml
+            - values.yml
       destination:
         server: https://kubernetes.default.svc
         namespace: >-
