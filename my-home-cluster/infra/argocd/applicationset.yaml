@@ -24,6 +24,8 @@ spec:
         targetRevision: HEAD
         path: '{{.path.path}}'
         helm:
+          skipBuildDependencies: false
+        helm:
           valueFiles:
             - values.yaml
       destination:
