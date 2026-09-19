@@ -1,476 +1,478 @@
-## Nextcloud configuration
-
-global:
-    image:
-        registry: null
-    security:
-        allowInsecureImages: true
-
-## ref: https://hub.docker.com/r/library/nextcloud/tags/
-image:
-    registry: docker.io
-    repository: library/nextcloud
-    flavor: apache
-    tag: null
-    pullPolicy: IfNotPresent
-
-nameOverride: ""
-fullnameOverride: ""
-podAnnotations: {}
-podLabels: {}
-deploymentAnnotations: {}
-deploymentLabels: {}
-
-# Number of replicas to be deployed
-replicaCount: 1
-httpRoute:
-    enabled: false
-    apiVersion: gateway.networking.k8s.io/v1
-    kind: HTTPRoute
-    annotations: {}
-    labels: {}
-    hostnames: []
-    parentRefs: []
-    rules:
-        - matches:
-            - path:
-                type: PathPrefix
-                value: /
-
-## Allowing use of ingress controllers
-## ref: https://kubernetes.io/docs/concepts/services-networking/ingress/
-ingress:
-    enabled: true
-    className: traefik
-    annotations: {}
-    labels: {}
-    path: /
-    pathType: Prefix
-    tls:
-        - hosts:
-            - nextcloud.kube.home
-          secretName: nextcloud-tls
-
 nextcloud:
-    host: nextcloud.kube.home
-    username: ""
-    password: ""
-    existingSecret:
-        enabled: true
-        secretName: nextcloud-secret
-        usernameKey: "adminUsername"
-        passwordKey: "adminPassword"
-    update: 0
-    # If web server is not binding default port, you can define it
-    containerPort: 80
-    datadir: /var/www/html/data
-    persistence:
-        subPath: null
-    # if set, we'll template this list to the NEXTCLOUD_TRUSTED_DOMAINS env var
-    trustedDomains: []
-    objectStore:
-        s3:
-            enabled: false
-            accessKey: ""
-            secretKey: ""
-            legacyAuth: false
-            host: ""
-            ssl: true
-            port: "443"
-            region: eu-west-1
-            bucket: ""
-            prefix: ""
-            usePathStyle: false
-            autoCreate: false
-            storageClass: STANDARD
-            sse_c_key: ""
-            existingSecret: ""
-            secretKeys:
-                host: ""
-                accessKey: ""
-                secretKey: ""
-                bucket: ""
-                sse_c_key: ""
-        swift:
-            enabled: false
-            user:
-                domain: Default
-                name: ""
-                password: ""
-            project:
-                name: ""
-                domain: Default
-            url: ""
-            region: ""
-            service: swift
-            container: ""
-            autoCreate: false
-    openmetrics:
-        allowedClients:
-            - 127.0.0.1
-            - 10.42.0.0/16
-            - 10.43.0.0/16
-    # Extra config files created in /var/www/html/config/
-    configs: {}
-    # For example, to enable image and text file previews:
-    #  previews.config.php: |-
-    #    <?php
-    #    $CONFIG = array (
-    #      'enable_previews' => true,
-    #      'enabledPreviewProviders' => array (
-    #        'OC\Preview\Movie',
-    #        'OC\Preview\PNG',
-    #        'OC\Preview\JPEG',
-    #        'OC\Preview\GIF',
-    #        'OC\Preview\BMP',
-    #        'OC\Preview\XBitmap',
-    #        'OC\Preview\MP3',
-    #        'OC\Preview\MP4',
-    #        'OC\Preview\TXT',
-    #        'OC\Preview\MarkDown',
-    #        'OC\Preview\PDF'
-    #      ),
-    #    );
-    # Hooks for auto configuration
-    hooks:
-        pre-installation: null
-        post-installation: null
-        pre-upgrade: null
-        post-upgrade: null
-        before-starting: null
-    strategy:
-        type: RollingUpdate
-        rollingUpdate:
-          maxSurge: 1
-          maxUnavailable: 0
-    extraEnv: null
-    # Extra init containers that runs before pods start.
-    extraInitContainers: []
-    # Extra sidecar containers.
-    extraSidecarContainers: []
-    extraVolumeMounts: null
-    # Set securityContext parameters for the nextcloud CONTAINER only (will not affect nginx container).
-    securityContext: {}
-    # Set securityContext parameters for the entire pod.
-    podSecurityContext: {}
-    mariaDbInitContainer:
-        resources: {}
-        securityContext: {}
-    postgreSqlInitContainer:
-        resources: {}
-        securityContext: {}
-    priorityClassName: ""
 
-nginx:
-    enabled: false
+    ## Nextcloud configuration
+
+    global:
+        image:
+            registry: null
+        security:
+            allowInsecureImages: true
+
+    ## ref: https://hub.docker.com/r/library/nextcloud/tags/
     image:
         registry: docker.io
-        repository: library/nginx
-        tag: alpine
+        repository: library/nextcloud
+        flavor: apache
+        tag: null
         pullPolicy: IfNotPresent
-    containerPort: 80
-    ipFamilies:
-        - IPv4
-    config:
-        # This generates the default nginx config as per the nextcloud documentation
-        default: true
-        headers:
-            # the consequences in https://hstspreload.org/. This option
-            # will add the domain to a hardcoded list that is shipped
-            # in all major browsers and getting removed from this list
-            # could take several months.
-            # "Strict-Transport-Security": "max-age=15768000; includeSubDomains; preload;"
-            Strict-Transport-Security: ""
-            Referrer-Policy: no-referrer
-            X-Content-Type-Options: nosniff
-            X-Frame-Options: SAMEORIGIN
-            X-Permitted-Cross-Domain-Policies: none
-            X-Robots-Tag: noindex, nofollow
-            X-XSS-Protection: 1; mode=block
-        # Added in server block of default config.
-        serverBlockCustom: |
-            # set max upload size
-            client_max_body_size 10G;
-            client_body_timeout 300s;
-            fastcgi_buffers 64 4K;
-            fastcgi_read_timeout 3600s;
-        custom: null
-        #     worker_processes  1;..
-    resources: {}
-    # Set nginx container securityContext parameters. For example, you may need to define runAsNonRoot directive
-    securityContext: {}
-    # the nginx alpine container default user is 82
-    extraEnv: []
-internalDatabase:
-    enabled: true
-    name: nextcloud
 
-## External database configuration
-externalDatabase:
-    enabled: false
-    type: mysql
-    host: ""
-    user: nextcloud
-    password: ""
-    database: nextcloud
-    existingSecret:
-        enabled: false
-        usernameKey: db-username
-        passwordKey: db-password
-
-## External Redis configuration
-externalRedis:
-    enabled: false
-    host: ""
-    port: "6379"
-    password: ""
-    existingSecret:
-        enabled: false
-        passwordKey: redis-password
-## Collabora chart configuration
-## for more options see https://github.com/CollaboraOnline/online/tree/master/kubernetes/helm/collabora-online
-collabora:
-    enabled: false
-    autoscaling:
-        # enable autocaling, please check collabora README.md first
-        enabled: false
-    collabora:
-        ## HTTPS nextcloud domain, if needed
-        aliasgroups: []
-        # set extra parameters for collabora
-        # you may need to add --o:ssl.termination=true
-        extra_params: --o:ssl.enable=false
-        ## Specify server_name when the hostname is not reachable directly for
-        # example behind reverse-proxy. example: collabora.domain
-        server_name: null
-        existingSecret:
-            # set to true to to get collabora admin credentials from an existin secret
-            # if set, ignores collabora.collabora.username and password
-            enabled: false
-            # name of existing Kubernetes Secret with collboara admin credentials
-            secretName: ""
-            usernameKey: username
-            passwordKey: password
-        # setup admin login credentials, these are ignored if
-        # collabora.collabora.existingSecret.enabled=true
-        password: examplepass
-        username: admin
-    # setup ingress
-    ingress:
-        # enable ingress for collabora online
-        enabled: false
-        className: ""
-        # please check collabora values.yaml for nginx/haproxy annotations examples
-        annotations: {}
-        hosts:
-            - host: chart-example.local
-              paths:
-                - path: /
-                  pathType: ImplementationSpecific
-        tls: []
-    # see collabora helm README.md for recommended values
-    resources: {}
-## Cronjob to execute Nextcloud background tasks
-## ref: https://docs.nextcloud.com/server/latest/admin_manual/configuration_server/background_jobs_configuration.html#cron
-cronjob:
-    enabled: false
-    type: sidecar
-    # Runs crond as a sidecar container in the Nextcloud pod
-    sidecar:
-        ## Cronjob sidecar resource requests and limits
-        ## ref: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
-        resources: {}
-        # Allow configuration of lifecycle hooks
-        lifecycle: {}
-        # Set securityContext parameters. For example, you may need to define runAsNonRoot directive
-        securityContext: {}
-        # The command the cronjob container executes.
-        command:
-            - /cron.sh
-    # Uses a Kubernetes CronJob to execute the Nextcloud cron tasks
-    cronjob:
-        # Use a CronJob instead of crond sidecar container
-        # crond does not work when not running as root user
-        schedule: '*/5 * * * *'
-        successfulJobsHistoryLimit: 3
-        failedJobsHistoryLimit: 5
-        activeDeadlineSeconds: null
-        labels: {}
-        podLabels: {}
-        annotations: {}
-        backoffLimit: 1
-        affinity: {}
-        # Often RWO volumes are used. But the cronjob pod needs access to the same volume as the nextcloud pod.
-        # Depending on your provider two pods on the same node can still access the same volume.
-        # Following config ensures that the cronjob pod is scheduled on the same node as the nextcloud pod.
-        ## Resource requests and limits
-        ## ref: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
-        resources: {}
-        # Overrides .Values.priorityClassName
-        priorityClassName: ""
-        # Allow configuration of lifecycle hooks
-        # Set securityContext parameters. For example, you may need to define runAsNonRoot directive
-        securityContext: {}
-        # The command to run in the cronjob container
-        # Example to incerase memory limit: php -d memory_limit=2G ...
-        command:
-            - php
-            - -f
-            - /var/www/html/cron.php
-            - --
-            - --verbose
-service:
-    type: ClusterIP
-    port: 8080
-    loadBalancerIP: ""
-    nodePort: null
-    annotations: {}
-    sessionAffinity: ""
-    sessionAffinityConfig: {}
-
-## Enable persistence using Persistent Volume Claims
-## ref: https://kubernetes.io/docs/concepts/storage/persistent-volumes/
-persistence:
-    enabled: true 
-    annotations: {}
-    labels: {}
-    accessMode: ReadWriteOnce
-    size: 3Gi
-    hostPath: null
-    nextcloudData:
-        enabled: false
-        hostPath: null
-        subPath: null
-        labels: {}
-        annotations: {}
-        accessMode: ReadWriteOnce
-        size: 8Gi
-
-resources: {}
-priorityClassName: ""
-## Liveness and readiness probe values
-livenessProbe:
-    enabled: true
-    initialDelaySeconds: 10
-    periodSeconds: 10
-    timeoutSeconds: 5
-    failureThreshold: 3
-    successThreshold: 1
-readinessProbe:
-    enabled: true
-    initialDelaySeconds: 10
-    periodSeconds: 10
-    timeoutSeconds: 5
-    failureThreshold: 3
-    successThreshold: 1
-startupProbe:
-    enabled: false
-    initialDelaySeconds: 30
-    periodSeconds: 10
-    timeoutSeconds: 5
-    failureThreshold: 30
-    successThreshold: 1
-hpa:
-    enabled: false
-    cputhreshold: 60
-    minPods: 1
-    maxPods: 10
-nodeSelector: 
-    kubernetes.io/hostname: server2
-tolerations: []
-topologySpreadConstraints: []
-affinity: {}
-dnsConfig: {}
-
-## Prometheus Exporter / Metrics
-metrics:
-    enabled: false
-    replicaCount: 1
-    # Without it, we will use the full name of the nextcloud service
-    server: ""
-    # The metrics exporter needs to know how you serve Nextcloud either http or https
-    https: false
-    # Use API token if set, otherwise fall back to password authentication
-    # Currently you still need to set the token manually in your nextcloud install
-    token: ""
-    timeout: 5s
-    # if set to true, exporter skips certificate verification of Nextcloud server.
-    tlsSkipVerify: false
-    info:
-        # Enables gathering of apps-related metrics. Defaults to false
-        apps: false
-        update: false
-    image:
-        registry: docker.io
-        repository: xperimental/nextcloud-exporter
-        tag: 0.8.0
-        pullPolicy: IfNotPresent
-    resources: {}
+    nameOverride: ""
+    fullnameOverride: ""
     podAnnotations: {}
     podLabels: {}
-    nodeSelector: {}
-    tolerations: []
-    affinity: {}
+    deploymentAnnotations: {}
+    deploymentLabels: {}
+
+    # Number of replicas to be deployed
+    replicaCount: 1
+    httpRoute:
+        enabled: false
+        apiVersion: gateway.networking.k8s.io/v1
+        kind: HTTPRoute
+        annotations: {}
+        labels: {}
+        hostnames: []
+        parentRefs: []
+        rules:
+            - matches:
+                - path:
+                    type: PathPrefix
+                    value: /
+
+    ## Allowing use of ingress controllers
+    ## ref: https://kubernetes.io/docs/concepts/services-networking/ingress/
+    ingress:
+        enabled: true
+        className: traefik
+        annotations: {}
+        labels: {}
+        path: /
+        pathType: Prefix
+        tls:
+            - hosts:
+                - nextcloud.kube.home
+              secretName: nextcloud-tls
+
+    nextcloud:
+        host: nextcloud.kube.home
+        username: ""
+        password: ""
+        existingSecret:
+            enabled: true
+            secretName: nextcloud-secret
+            usernameKey: "adminUsername"
+            passwordKey: "adminPassword"
+        update: 0
+        # If web server is not binding default port, you can define it
+        containerPort: 80
+        datadir: /var/www/html/data
+        persistence:
+            subPath: null
+        # if set, we'll template this list to the NEXTCLOUD_TRUSTED_DOMAINS env var
+        trustedDomains: []
+        objectStore:
+            s3:
+                enabled: false
+                accessKey: ""
+                secretKey: ""
+                legacyAuth: false
+                host: ""
+                ssl: true
+                port: "443"
+                region: eu-west-1
+                bucket: ""
+                prefix: ""
+                usePathStyle: false
+                autoCreate: false
+                storageClass: STANDARD
+                sse_c_key: ""
+                existingSecret: ""
+                secretKeys:
+                    host: ""
+                    accessKey: ""
+                    secretKey: ""
+                    bucket: ""
+                    sse_c_key: ""
+            swift:
+                enabled: false
+                user:
+                    domain: Default
+                    name: ""
+                    password: ""
+                project:
+                    name: ""
+                    domain: Default
+                url: ""
+                region: ""
+                service: swift
+                container: ""
+                autoCreate: false
+        openmetrics:
+            allowedClients:
+                - 127.0.0.1
+                - 10.42.0.0/16
+                - 10.43.0.0/16
+        # Extra config files created in /var/www/html/config/
+        configs: {}
+        # For example, to enable image and text file previews:
+        #  previews.config.php: |-
+        #    <?php
+        #    $CONFIG = array (
+        #      'enable_previews' => true,
+        #      'enabledPreviewProviders' => array (
+        #        'OC\Preview\Movie',
+        #        'OC\Preview\PNG',
+        #        'OC\Preview\JPEG',
+        #        'OC\Preview\GIF',
+        #        'OC\Preview\BMP',
+        #        'OC\Preview\XBitmap',
+        #        'OC\Preview\MP3',
+        #        'OC\Preview\MP4',
+        #        'OC\Preview\TXT',
+        #        'OC\Preview\MarkDown',
+        #        'OC\Preview\PDF'
+        #      ),
+        #    );
+        # Hooks for auto configuration
+        hooks:
+            pre-installation: null
+            post-installation: null
+            pre-upgrade: null
+            post-upgrade: null
+            before-starting: null
+        strategy:
+            type: RollingUpdate
+            rollingUpdate:
+              maxSurge: 1
+              maxUnavailable: 0
+        extraEnv: null
+        # Extra init containers that runs before pods start.
+        extraInitContainers: []
+        # Extra sidecar containers.
+        extraSidecarContainers: []
+        extraVolumeMounts: null
+        # Set securityContext parameters for the nextcloud CONTAINER only (will not affect nginx container).
+        securityContext: {}
+        # Set securityContext parameters for the entire pod.
+        podSecurityContext: {}
+        mariaDbInitContainer:
+            resources: {}
+            securityContext: {}
+        postgreSqlInitContainer:
+            resources: {}
+            securityContext: {}
+        priorityClassName: ""
+
+    nginx:
+        enabled: false
+        image:
+            registry: docker.io
+            repository: library/nginx
+            tag: alpine
+            pullPolicy: IfNotPresent
+        containerPort: 80
+        ipFamilies:
+            - IPv4
+        config:
+            # This generates the default nginx config as per the nextcloud documentation
+            default: true
+            headers:
+                # the consequences in https://hstspreload.org/. This option
+                # will add the domain to a hardcoded list that is shipped
+                # in all major browsers and getting removed from this list
+                # could take several months.
+                # "Strict-Transport-Security": "max-age=15768000; includeSubDomains; preload;"
+                Strict-Transport-Security: ""
+                Referrer-Policy: no-referrer
+                X-Content-Type-Options: nosniff
+                X-Frame-Options: SAMEORIGIN
+                X-Permitted-Cross-Domain-Policies: none
+                X-Robots-Tag: noindex, nofollow
+                X-XSS-Protection: 1; mode=block
+            # Added in server block of default config.
+            serverBlockCustom: |
+                # set max upload size
+                client_max_body_size 10G;
+                client_body_timeout 300s;
+                fastcgi_buffers 64 4K;
+                fastcgi_read_timeout 3600s;
+            custom: null
+            #     worker_processes  1;..
+        resources: {}
+        # Set nginx container securityContext parameters. For example, you may need to define runAsNonRoot directive
+        securityContext: {}
+        # the nginx alpine container default user is 82
+        extraEnv: []
+    internalDatabase:
+        enabled: true
+        name: nextcloud
+
+    ## External database configuration
+    externalDatabase:
+        enabled: false
+        type: mysql
+        host: ""
+        user: nextcloud
+        password: ""
+        database: nextcloud
+        existingSecret:
+            enabled: false
+            usernameKey: db-username
+            passwordKey: db-password
+
+    ## External Redis configuration
+    externalRedis:
+        enabled: false
+        host: ""
+        port: "6379"
+        password: ""
+        existingSecret:
+            enabled: false
+            passwordKey: redis-password
+    ## Collabora chart configuration
+    ## for more options see https://github.com/CollaboraOnline/online/tree/master/kubernetes/helm/collabora-online
+    collabora:
+        enabled: false
+        autoscaling:
+            # enable autocaling, please check collabora README.md first
+            enabled: false
+        collabora:
+            ## HTTPS nextcloud domain, if needed
+            aliasgroups: []
+            # set extra parameters for collabora
+            # you may need to add --o:ssl.termination=true
+            extra_params: --o:ssl.enable=false
+            ## Specify server_name when the hostname is not reachable directly for
+            # example behind reverse-proxy. example: collabora.domain
+            server_name: null
+            existingSecret:
+                # set to true to to get collabora admin credentials from an existin secret
+                # if set, ignores collabora.collabora.username and password
+                enabled: false
+                # name of existing Kubernetes Secret with collboara admin credentials
+                secretName: ""
+                usernameKey: username
+                passwordKey: password
+            # setup admin login credentials, these are ignored if
+            # collabora.collabora.existingSecret.enabled=true
+            password: examplepass
+            username: admin
+        # setup ingress
+        ingress:
+            # enable ingress for collabora online
+            enabled: false
+            className: ""
+            # please check collabora values.yaml for nginx/haproxy annotations examples
+            annotations: {}
+            hosts:
+                - host: chart-example.local
+                  paths:
+                    - path: /
+                      pathType: ImplementationSpecific
+            tls: []
+        # see collabora helm README.md for recommended values
+        resources: {}
+    ## Cronjob to execute Nextcloud background tasks
+    ## ref: https://docs.nextcloud.com/server/latest/admin_manual/configuration_server/background_jobs_configuration.html#cron
+    cronjob:
+        enabled: false
+        type: sidecar
+        # Runs crond as a sidecar container in the Nextcloud pod
+        sidecar:
+            ## Cronjob sidecar resource requests and limits
+            ## ref: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+            resources: {}
+            # Allow configuration of lifecycle hooks
+            lifecycle: {}
+            # Set securityContext parameters. For example, you may need to define runAsNonRoot directive
+            securityContext: {}
+            # The command the cronjob container executes.
+            command:
+                - /cron.sh
+        # Uses a Kubernetes CronJob to execute the Nextcloud cron tasks
+        cronjob:
+            # Use a CronJob instead of crond sidecar container
+            # crond does not work when not running as root user
+            schedule: '*/5 * * * *'
+            successfulJobsHistoryLimit: 3
+            failedJobsHistoryLimit: 5
+            activeDeadlineSeconds: null
+            labels: {}
+            podLabels: {}
+            annotations: {}
+            backoffLimit: 1
+            affinity: {}
+            # Often RWO volumes are used. But the cronjob pod needs access to the same volume as the nextcloud pod.
+            # Depending on your provider two pods on the same node can still access the same volume.
+            # Following config ensures that the cronjob pod is scheduled on the same node as the nextcloud pod.
+            ## Resource requests and limits
+            ## ref: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+            resources: {}
+            # Overrides .Values.priorityClassName
+            priorityClassName: ""
+            # Allow configuration of lifecycle hooks
+            # Set securityContext parameters. For example, you may need to define runAsNonRoot directive
+            securityContext: {}
+            # The command to run in the cronjob container
+            # Example to incerase memory limit: php -d memory_limit=2G ...
+            command:
+                - php
+                - -f
+                - /var/www/html/cron.php
+                - --
+                - --verbose
     service:
         type: ClusterIP
-        # Use serviceLoadBalancerIP to request a specific static IP,
-        # otherwise leave blank
-        loadBalancerIP: null
-        annotations:
-            prometheus.io/scrape: "true"
-            prometheus.io/port: "9205"
+        port: 8080
+        loadBalancerIP: ""
+        nodePort: null
+        annotations: {}
+        sessionAffinity: ""
+        sessionAffinityConfig: {}
+
+    ## Enable persistence using Persistent Volume Claims
+    ## ref: https://kubernetes.io/docs/concepts/storage/persistent-volumes/
+    persistence:
+        enabled: true 
+        annotations: {}
         labels: {}
-    securityContext:
-        runAsUser: 1000
-        runAsNonRoot: true
-    podSecurityContext: {}
-prometheus:
-    serviceMonitor:
-        ## @param metrics.serviceMonitor.enabled Create ServiceMonitor Resource for scraping metrics using PrometheusOperator
+        accessMode: ReadWriteOnce
+        size: 3Gi
+        hostPath: null
+        nextcloudData:
+            enabled: false
+            hostPath: null
+            subPath: null
+            labels: {}
+            annotations: {}
+            accessMode: ReadWriteOnce
+            size: 8Gi
+
+    resources: {}
+    priorityClassName: ""
+    ## Liveness and readiness probe values
+    livenessProbe:
+        enabled: true
+        initialDelaySeconds: 10
+        periodSeconds: 10
+        timeoutSeconds: 5
+        failureThreshold: 3
+        successThreshold: 1
+    readinessProbe:
+        enabled: true
+        initialDelaySeconds: 10
+        periodSeconds: 10
+        timeoutSeconds: 5
+        failureThreshold: 3
+        successThreshold: 1
+    startupProbe:
         enabled: false
-        ## @param metrics.serviceMonitor.namespace Namespace in which Prometheus is running
-        namespace: ""
-        ## @param metrics.serviceMonitor.namespaceSelector The selector of the namespace where the target service is located (defaults to the release namespace)
-        namespaceSelector: null
-        ## @param metrics.serviceMonitor.jobLabel The name of the label on the target service to use as the job name in prometheus.
-        jobLabel: ""
-        ## @param metrics.serviceMonitor.interval Interval at which metrics should be scraped
-        interval: 30s
-        ## @param metrics.serviceMonitor.scrapeTimeout Specify the timeout after which the scrape is ended
-        scrapeTimeout: ""
-        ## @param metrics.serviceMonitor.labels Extra labels for the ServiceMonitor
-        labels: {}
-    rules:
-        # @section -- Metrics
+        initialDelaySeconds: 30
+        periodSeconds: 10
+        timeoutSeconds: 5
+        failureThreshold: 30
+        successThreshold: 1
+    hpa:
         enabled: false
-        # @section -- Metrics
-        labels: {}
-        defaults:
+        cputhreshold: 60
+        minPods: 1
+        maxPods: 10
+    nodeSelector: 
+        kubernetes.io/hostname: server2
+    tolerations: []
+    topologySpreadConstraints: []
+    affinity: {}
+    dnsConfig: {}
+
+    ## Prometheus Exporter / Metrics
+    metrics:
+        enabled: false
+        replicaCount: 1
+        # Without it, we will use the full name of the nextcloud service
+        server: ""
+        # The metrics exporter needs to know how you serve Nextcloud either http or https
+        https: false
+        # Use API token if set, otherwise fall back to password authentication
+        # Currently you still need to set the token manually in your nextcloud install
+        token: ""
+        timeout: 5s
+        # if set to true, exporter skips certificate verification of Nextcloud server.
+        tlsSkipVerify: false
+        info:
+            # Enables gathering of apps-related metrics. Defaults to false
+            apps: false
+            update: false
+        image:
+            registry: docker.io
+            repository: xperimental/nextcloud-exporter
+            tag: 0.8.0
+            pullPolicy: IfNotPresent
+        resources: {}
+        podAnnotations: {}
+        podLabels: {}
+        nodeSelector: {}
+        tolerations: []
+        affinity: {}
+        service:
+            type: ClusterIP
+            # Use serviceLoadBalancerIP to request a specific static IP,
+            # otherwise leave blank
+            loadBalancerIP: null
+            annotations:
+                prometheus.io/scrape: "true"
+                prometheus.io/port: "9205"
+            labels: {}
+        securityContext:
+            runAsUser: 1000
+            runAsNonRoot: true
+        podSecurityContext: {}
+    prometheus:
+        serviceMonitor:
+            ## @param metrics.serviceMonitor.enabled Create ServiceMonitor Resource for scraping metrics using PrometheusOperator
+            enabled: false
+            ## @param metrics.serviceMonitor.namespace Namespace in which Prometheus is running
+            namespace: ""
+            ## @param metrics.serviceMonitor.namespaceSelector The selector of the namespace where the target service is located (defaults to the release namespace)
+            namespaceSelector: null
+            ## @param metrics.serviceMonitor.jobLabel The name of the label on the target service to use as the job name in prometheus.
+            jobLabel: ""
+            ## @param metrics.serviceMonitor.interval Interval at which metrics should be scraped
+            interval: 30s
+            ## @param metrics.serviceMonitor.scrapeTimeout Specify the timeout after which the scrape is ended
+            scrapeTimeout: ""
+            ## @param metrics.serviceMonitor.labels Extra labels for the ServiceMonitor
+            labels: {}
+        rules:
             # @section -- Metrics
-            enabled: true
+            enabled: false
             # @section -- Metrics
             labels: {}
+            defaults:
+                # @section -- Metrics
+                enabled: true
+                # @section -- Metrics
+                labels: {}
+                # @section -- Metrics
+                filter: ""
             # @section -- Metrics
-            filter: ""
-        # @section -- Metrics
-        additionalRules: []
-rbac:
-    enabled: true
-    serviceaccount:
-        create: true
-        name: nextcloud-serviceaccount
-        annotations: {}
-## @param securityContext for nextcloud pod @deprecated Use `nextcloud.podSecurityContext` instead
-securityContext: {}
-# Could either be a list or a map
-# If a map, each key is the name of the manifest.
-# If an array, each item is a manifest, which can be a string (YAML block) or a YAML object.
-# Each item should be a string containing valid YAML. Example:
-#       ...
-#       ...
-# Or as a map:
-#   my-middleware:
-#       ...
-#   my-ingressroute:
-#       ...
-extraManifests: []
+            additionalRules: []
+    rbac:
+        enabled: true
+        serviceaccount:
+            create: true
+            name: nextcloud-serviceaccount
+            annotations: {}
+    ## @param securityContext for nextcloud pod @deprecated Use `nextcloud.podSecurityContext` instead
+    securityContext: {}
+    # Could either be a list or a map
+    # If a map, each key is the name of the manifest.
+    # If an array, each item is a manifest, which can be a string (YAML block) or a YAML object.
+    # Each item should be a string containing valid YAML. Example:
+    #       ...
+    #       ...
+    # Or as a map:
+    #   my-middleware:
+    #       ...
+    #   my-ingressroute:
+    #       ...
+    extraManifests: []
