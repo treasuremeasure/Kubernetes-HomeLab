@@ -449,11 +449,11 @@ mlflow:
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
     hosts:
-      - host: mlfow.kube.home
+      - host: mlflow.kube.home
         paths:
           - path: /
             # -- Ingress path type
-            pathType: ImplementationSpecific
+            pathType: Prefix
     # -- Ingress tls configuration for https access
     tls: []
     #  - secretName: chart-example-tls
