@@ -516,7 +516,8 @@ mlflow:
     # - regex: prometheus_replica
     #   action: labeldrop
   # -- For more information checkout: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
-  nodeSelector: {}
+  nodeSelector: 
+        kubernetes.io/hostname: server2
   # -- For more information checkout: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
   tolerations: []
   # -- For more information checkout: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity
