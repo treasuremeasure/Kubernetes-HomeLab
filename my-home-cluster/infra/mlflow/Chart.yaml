@@ -1,0 +1,8 @@
+apiVersion: v2
+appVersion: 1.0.0
+version: 1.0.0
+name: my-mlflow 
+dependencies:
+- name: mlflow
+  version: 1.11.7
+  repository: https://community-charts.github.io/helm-charts 
