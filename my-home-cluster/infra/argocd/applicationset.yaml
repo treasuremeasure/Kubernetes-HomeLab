@@ -24,9 +24,9 @@ spec:
         targetRevision: HEAD
         path: '{{.path.path}}'
         helm:
-          skipBuildDependencies: true
+          skipBuildDependencies: false
           valueFiles:
-            - values.yml
+            - values.yaml
       destination:
         server: https://kubernetes.default.svc
         namespace: >-
