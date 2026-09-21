@@ -50,7 +50,7 @@ mlflow:
   # -- String to override the default generated fullname
   fullnameOverride: ""
   # -- The number of old ReplicaSets to retain for rollback. More information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#clean-up-policy
-  revisionHistoryLimit: ~
+  revisionHistoryLimit: 0
   serviceAccount:
     # -- Specifies whether a ServiceAccount should be created
     create: true
@@ -122,19 +122,20 @@ mlflow:
     defaultSqlitePath: ":memory:"
     postgres:
       # -- Specifies if you want to use postgres backend storage
-      enabled: false
+      enabled: true
       # -- Postgres host address. e.g. your RDS or Azure Postgres Service endpoint
-      host: "" # required
+      host: "steps-postgres.app-steps-analyzer.svc.cluster.local" # required
       # -- Postgres service port
       port: 5432 # required
       # -- mlflow database name created before in the postgres instance
-      database: "" # required
+      database: "mlflow" # required
       # -- postgres database user name which can access to mlflow database
-      user: "" # required
+      user: "mlflow_user" # required
       # -- postgres database user password which can access to mlflow database
       password: "" # required
       # -- postgres database connection driver. e.g.: "psycopg2"
       driver: ""
+      extraPipPackages: [ "psycopg2-binary" ]
     mysql:
       # -- Specifies if you want to use mysql backend storage
       enabled: false
@@ -399,7 +400,8 @@ mlflow:
     #     periodSeconds: 15
     #   selectPolicy: Max
   # -- A map of arguments and values to pass to the `mlflow server` command. Keys must be camelcase. Helm will turn them to kebabcase style.
-  extraArgs: {}
+  extraArgs: 
+    - psycopg2-binary
   # Number of gunicorn worker processes to handle requests (default: 4).
   # workers: TEXT
   # A prefix which will be prepended to the path of all static paths.
