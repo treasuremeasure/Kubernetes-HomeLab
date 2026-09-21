@@ -665,7 +665,7 @@ mlflow:
       uri: ""
       postgres:
         # -- Use PostgreSQL for the OIDC user/permission database
-        enabled: false
+        enabled: true
         # -- Postgres host for the OIDC user/permission database
         host: ""
         # -- Postgres port for the OIDC user/permission database
