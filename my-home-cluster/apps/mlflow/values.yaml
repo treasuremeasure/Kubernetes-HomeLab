@@ -134,8 +134,7 @@ mlflow:
       # -- postgres database user password which can access to mlflow database
       password: "" # required
       # -- postgres database connection driver. e.g.: "psycopg2"
-      driver: ""
-      extraPipPackages: [ "psycopg2-binary" ]
+      driver: "psycopg2" 
     mysql:
       # -- Specifies if you want to use mysql backend storage
       enabled: false
@@ -400,8 +399,8 @@ mlflow:
     #     periodSeconds: 15
     #   selectPolicy: Max
   # -- A map of arguments and values to pass to the `mlflow server` command. Keys must be camelcase. Helm will turn them to kebabcase style.
-  extraArgs: 
-    - psycopg2-binary
+  extraArgs: {} 
+    
   # Number of gunicorn worker processes to handle requests (default: 4).
   # workers: TEXT
   # A prefix which will be prepended to the path of all static paths.
