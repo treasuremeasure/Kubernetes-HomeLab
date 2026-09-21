@@ -132,7 +132,7 @@ mlflow:
       # -- postgres database user name which can access to mlflow database
       user: "mlflow_user" # required
       # -- postgres database user password which can access to mlflow database
-      password: "" # required
+      password: " " # required
       # -- postgres database connection driver. e.g.: "psycopg2"
       driver: "psycopg2" 
     mysql:
