@@ -119,7 +119,7 @@ mlflow:
     # -- Add an additional init container, which checks for database availability
     databaseConnectionCheck: false
     # -- Specifies the default sqlite path
-    defaultSqlitePath: ":memory:"
+    defaultSqlitePath: ""
     postgres:
       # -- Specifies if you want to use postgres backend storage
       enabled: true
@@ -144,7 +144,7 @@ mlflow:
       port: 3306 # required
       # -- mlflow database name created before in the mysql instance
       database: "" # required
-      # -- mysql database user name which can access to mlflow database
+        # -- mysql database user name which can access to mlflow database
       user: "" # required
       # -- mysql database user password which can access to mlflow database
       password: "" # required
