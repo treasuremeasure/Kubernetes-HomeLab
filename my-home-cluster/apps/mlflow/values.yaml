@@ -1,6 +1,6 @@
 mlflow:
   # -- (int) Numbers of replicas
-  replicaCount: 1
+  replicaCount: 0 
   # -- Image of mlflow
   image:
     # -- The docker image repository to use
@@ -706,7 +706,7 @@ mlflow:
     # -- Number of drives attached to a node
     drivesPerNode: 1
     # -- Number of MinIO containers running
-    replicas: 1
+    replicas: 1 
     # -- Number of expanded MinIO clusters
     pools: 1
     # -- MinIO root user (access key). Length must be at least 3 characters.
