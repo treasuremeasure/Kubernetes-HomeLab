@@ -4,9 +4,10 @@ metadata:
   name: mlflow-pv-volume
   namespace: app-mlflow
 spec:
+  storageClassName: "local-path" 
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
       storage: 10Gi
-    storageClassName: "local-path" 
+   
