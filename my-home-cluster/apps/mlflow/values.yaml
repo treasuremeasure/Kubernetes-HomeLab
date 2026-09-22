@@ -1,6 +1,6 @@
 mlflow:
   # -- (int) Numbers of replicas
-  replicaCount: 0 
+  replicaCount: 1  
   # -- Image of mlflow
   image:
     # -- The docker image repository to use
