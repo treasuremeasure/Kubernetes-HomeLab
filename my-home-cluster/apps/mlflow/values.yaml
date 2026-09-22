@@ -130,9 +130,9 @@ mlflow:
       # -- mlflow database name created before in the postgres instance
       database: "mlflow" # required
       # -- postgres database user name which can access to mlflow database
-      user: "mlflow_user" # required
+      user: "" # required
       # -- postgres database user password which can access to mlflow database
-      password: " " # required
+      password: "" # required
       # -- postgres database connection driver. e.g.: "psycopg2"
       driver: "psycopg2" 
     mysql:
@@ -181,11 +181,11 @@ mlflow:
     # -- Specifies if you want to use an existing database secret.
     existingDatabaseSecret:
       # -- The name of the existing database secret.
-      name: ""
+      name: "mlflow-db-secret"
       # -- The key of the username in the existing database secret.
-      usernameKey: "username"
+      usernameKey: "POSTGRES_USER"
       # -- The key of the password in the existing database secret.
-      passwordKey: "password"
+      passwordKey: "POSTGRES_PASS"
   # -- Bitnami PostgreSQL configuration. For more information checkout: https://github.com/bitnami/charts/tree/main/bitnami/postgresql
   postgresql:
     # -- Enable postgresql
