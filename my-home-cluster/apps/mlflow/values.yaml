@@ -229,7 +229,7 @@ mlflow:
   # Mlflow blob storage settings
   artifactRoot:
     # -- Specifies if you want to enable proxied artifact storage access
-    proxiedArtifactStorage: false
+    proxiedArtifactStorage: true
     # -- Specifies the default artifact root.
     defaultArtifactRoot: "./mlruns"
     # -- Specifies the default artifacts destination
@@ -532,18 +532,16 @@ mlflow:
   # -- Extra containers for the mlflow pod
   extraContainers: []
   # -- Extra Volumes for the pod
-  extraVolumes: []
-  # - name: mlflow-volume
-  #   persistentVolumeClaim:
-  #     claimName: mlflow-pv-volume
-  # - name: example
-  #   configMap:
-  #     name: example
+  extraVolumes: 
+    - name: mlflow-volume
+      persistentVolumeClaim:
+        claimName: mlflow-pv-volume
+ 
 
   # -- Extra Volume Mounts for the mlflow container
   extraVolumeMounts: []
-  # - name: mlflow-volume
-  #   mountPath: /mlflow/data
+    - name: mlflow-volume
+      mountPath: /mlartifacts
   # - name: example
   #   mountPath: /example
 
