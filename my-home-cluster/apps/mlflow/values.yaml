@@ -694,7 +694,7 @@ mlflow:
   # artifactRoot.s3.enabled must also be set to true with a matching bucket name.
   minio:
     # -- Enable the MinIO subchart
-    enabled: false
+    enabled: true
     # -- MinIO mode
     mode: standalone
     # -- Minio deployment update strategy
@@ -735,7 +735,7 @@ mlflow:
     #         - "s3:ListBucketMultipartUploads"
 
     # -- MinIO users
-    users: []
+    users: 
     #   ## Username, password and policy to be assigned to the user
     #   ## Default policies are [readonly|readwrite|writeonly|consoleAdmin|diagnostics]
     #   ## Add new policies as explained here https://docs.min.io/docs/minio-multi-user-quickstart-guide.html
@@ -749,14 +749,14 @@ mlflow:
     #     secretKey: my-super-secret
     #     policy: modelspolicy
     #   # Or you can refer to specific secret
-    #   #- accessKey: externalSecret
-    #   #  existingSecret: my-secret
-    #   #  existingSecretKey: password
-    #   #  policy: readonly
+    #    - accessKey: "mlflow"
+    #      existingSecret: mlflow-minio-secret
+    #      existingSecretKey: MINIO_SECRET_KEY
+    #      policy: consoleAdmin
 
     # -- Buckets to create on startup
     buckets:
-      - name: mlflow
+      - name: mlflow_datasets
         policy: none
         purge: false
     # -- MinIO resources
