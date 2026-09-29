@@ -697,6 +697,10 @@ mlflow:
       repository: pgsty/minio
       tag: "RELEASE.2026-08-04T00-00-00Z"
       pullPolicy: IfNotPresent
+    mcImage:
+      repository: pgsty/minio
+      tag: "RELEASE.2026-08-04T00-00-00Z"
+      pullPolicy: IfNotPresent
     # -- Enable the MinIO subchart
     enabled: true
     # -- MinIO mode
