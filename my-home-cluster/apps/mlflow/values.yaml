@@ -693,6 +693,10 @@ mlflow:
   # AWS_SECRET_ACCESS_KEY, and MLFLOW_S3_ENDPOINT_URL from the MinIO secret and service.
   # artifactRoot.s3.enabled must also be set to true with a matching bucket name.
   minio:
+    image:
+      repository: minio/minio
+      tag: "RELEASE.2024-12-18T13-15-44Z"
+      pullPolicy: IfNotPresent
     # -- Enable the MinIO subchart
     enabled: true
     # -- MinIO mode
