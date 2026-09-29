@@ -231,9 +231,9 @@ mlflow:
     # -- Specifies if you want to enable proxied artifact storage access
     proxiedArtifactStorage: true
     # -- Specifies the default artifact root.
-    defaultArtifactRoot: "/mlartifacts"
+    defaultArtifactRoot: "s3://mlflow-datasets"
     # -- Specifies the default artifacts destination
-    defaultArtifactsDestination: "/mlartifacts"
+    defaultArtifactsDestination: "s3://mlflow-datasets"
     # -- Specifies if you want to use Azure Blob Storage Mlflow Artifact Root
     azureBlob:
       # -- Specifies if you want to use Azure Blob Storage Mlflow Artifact Root
@@ -251,9 +251,9 @@ mlflow:
     # -- Specifies if you want to use AWS S3 Mlflow Artifact Root
     s3:
       # -- Specifies if you want to use AWS S3 Mlflow Artifact Root
-      enabled: false
+      enabled: true
       # -- S3 bucket name
-      bucket: "" # required
+      bucket: "mlflow-datasets" # required
       # -- S3 bucket folder. If you want to use root level, please don't set anything.
       path: "" # optional
       # -- AWS IAM user AWS_ACCESS_KEY_ID which has attached policy for access to the S3 bucket
@@ -532,16 +532,16 @@ mlflow:
   # -- Extra containers for the mlflow pod
   extraContainers: []
   # -- Extra Volumes for the pod
-  extraVolumes: 
-    - name: mlflow-volume
-      persistentVolumeClaim:
-        claimName: mlflow-pv-volume
+  #extraVolumes: 
+  # - name: mlflow-volume
+  #    persistentVolumeClaim:
+  #     claimName: mlflow-pv-volume
  
 
   # -- Extra Volume Mounts for the mlflow container
-  extraVolumeMounts: 
-    - name: mlflow-volume
-      mountPath: /mlartifacts
+  # extraVolumeMounts: 
+  #  - name: mlflow-volume
+  #    mountPath: /mlartifacts
   # - name: example
   #   mountPath: /example
 
