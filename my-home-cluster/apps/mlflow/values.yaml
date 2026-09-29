@@ -764,7 +764,7 @@ mlflow:
 
     # -- Buckets to create on startup
     buckets:
-      - name: mlflow_datasets
+      - name: mlflow-datasets
         policy: none
         purge: false
     # -- MinIO resources
