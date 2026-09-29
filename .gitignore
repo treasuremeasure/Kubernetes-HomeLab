@@ -5,3 +5,4 @@ ca.pem
 vault.conf
 *-cert.pem
 *-cert.srl
+*.tgz

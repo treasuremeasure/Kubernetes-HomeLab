@@ -735,7 +735,7 @@ mlflow:
     #         - "s3:ListBucketMultipartUploads"
 
     # -- MinIO users
-    users: 
+    users: [] 
     #   ## Username, password and policy to be assigned to the user
     #   ## Default policies are [readonly|readwrite|writeonly|consoleAdmin|diagnostics]
     #   ## Add new policies as explained here https://docs.min.io/docs/minio-multi-user-quickstart-guide.html
@@ -749,10 +749,10 @@ mlflow:
     #     secretKey: my-super-secret
     #     policy: modelspolicy
     #   # Or you can refer to specific secret
-    #    - accessKey: "mlflow"
-    #      existingSecret: mlflow-minio-secret
-    #      existingSecretKey: MINIO_SECRET_KEY
-    #      policy: consoleAdmin
+    #   - accessKey: "mlflow"
+    #   # existingSecret: mlflow-minio-secret
+    #   # existingSecretKey: MINIO_SECRET_KEY
+    #   # policy: consoleAdmin
 
     # -- Buckets to create on startup
     buckets:
