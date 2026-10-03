@@ -265,9 +265,9 @@ mlflow:
         # -- This is for setting up the AWS IAM user secrets existing secret name.
         name: ""
         # -- Key in the existing secret that holds the AWS_ACCESS_KEY_ID value.
-        keyOfAccessKeyId: "AWS_ACCESS_KEY_ID"
+        keyOfAccessKeyId: "rootUser"
         # -- Key in the existing secret that holds the AWS_SECRET_ACCESS_KEY value.
-        keyOfSecretAccessKey: "AWS_SECRET_ACCESS_KEY"
+        keyOfSecretAccessKey: "rootPassword"
     # -- Specifies if you want to use Google Cloud Storage Mlflow Artifact Root
     gcs:
       # -- Specifies if you want to use Google Cloud Storage Mlflow Artifact Root
