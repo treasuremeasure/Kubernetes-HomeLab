@@ -5,7 +5,7 @@ metadata:
   namespace: app-vaultwarden
 spec:
   timeZone: "Europe/Moscow"
-  schedule: "33 19 * * *"            
+  schedule: "38 19 * * *"            
   successfulJobsHistoryLimit: 3
   failedJobsHistoryLimit: 3
   jobTemplate:
