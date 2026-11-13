@@ -9,6 +9,9 @@ metadata:
     app.kubernetes.io/instance: {{ $.Release.Name | quote }}
 spec:
   schedule: {{ .schedule | quote }}
+  {{- with .timeZone }}
+  timeZone: {{ . | quote }}
+  {{- end }}
   concurrencyPolicy: {{ .concurrencyPolicy }}
   successfulJobsHistoryLimit: {{ .successfulJobsHistoryLimit }}
   failedJobsHistoryLimit: {{ .failedJobsHistoryLimit }}
