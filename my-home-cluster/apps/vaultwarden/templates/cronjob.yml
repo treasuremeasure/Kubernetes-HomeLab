@@ -5,7 +5,7 @@ metadata:
   namespace: app-vaultwarden
 spec:
   timeZone: "Europe/Moscow"
-  schedule: "03 20 * * *"            
+  schedule: "00 12 * * *"            
   successfulJobsHistoryLimit: 3
   failedJobsHistoryLimit: 3
   jobTemplate:
@@ -50,4 +50,4 @@ spec:
             - name: backup-dir
               nfs:   
                 server: 192.168.0.23
-                path: /media/server/SSD/vaultwarden
+                path: /media/ssd/vaultwarden
