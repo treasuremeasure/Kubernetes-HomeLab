@@ -1,0 +1,18 @@
+{{- if and .Values.nextcloud.cronjob.enabled (eq .Values.nextcloud.cronjob.type "custom") }}
+{{- with .Values.nextcloud.cronjob.cronjob }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ printf "%s-nextcloud-backup" $.Release.Name | trunc 63 | trimSuffix "-" }}
+  labels:
+    app.kubernetes.io/name: nextcloud-backup
+    app.kubernetes.io/instance: {{ $.Release.Name | quote }}
+spec:
+  schedule: {{ .schedule | quote }}
+  concurrencyPolicy: {{ .concurrencyPolicy }}
+  successfulJobsHistoryLimit: {{ .successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ .failedJobsHistoryLimit }}
+  jobTemplate:
+    {{- toYaml .jobTemplate | nindent 4 }}
+{{- end }}
+{{- end }}

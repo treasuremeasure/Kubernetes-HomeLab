@@ -272,55 +272,59 @@ nextcloud:
             tls: []
         # see collabora helm README.md for recommended values
         resources: {}
-    ## Cronjob to execute Nextcloud background tasks
-    ## ref: https://docs.nextcloud.com/server/latest/admin_manual/configuration_server/background_jobs_configuration.html#cron
+    # Custom CronJob rendered by this chart's templates/cronjob.yaml.
+    # The custom type prevents the dependency from rendering a second CronJob.
     cronjob:
-        enabled: false
-        type: sidecar
-        # Runs crond as a sidecar container in the Nextcloud pod
-        sidecar:
-            ## Cronjob sidecar resource requests and limits
-            ## ref: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
-            resources: {}
-            # Allow configuration of lifecycle hooks
-            lifecycle: {}
-            # Set securityContext parameters. For example, you may need to define runAsNonRoot directive
-            securityContext: {}
-            # The command the cronjob container executes.
-            command:
-                - /cron.sh
-        # Uses a Kubernetes CronJob to execute the Nextcloud cron tasks
+        enabled: true
+        type: custom
         cronjob:
-            # Use a CronJob instead of crond sidecar container
-            # crond does not work when not running as root user
-            schedule: '*/5 * * * *'
+            schedule: '03 16 * * *'
             successfulJobsHistoryLimit: 3
             failedJobsHistoryLimit: 5
-            activeDeadlineSeconds: null
-            labels: {}
-            podLabels: {}
-            annotations: {}
-            backoffLimit: 1
-            affinity: {}
-            # Often RWO volumes are used. But the cronjob pod needs access to the same volume as the nextcloud pod.
-            # Depending on your provider two pods on the same node can still access the same volume.
-            # Following config ensures that the cronjob pod is scheduled on the same node as the nextcloud pod.
-            ## Resource requests and limits
-            ## ref: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
-            resources: {}
-            # Overrides .Values.priorityClassName
-            priorityClassName: ""
-            # Allow configuration of lifecycle hooks
-            # Set securityContext parameters. For example, you may need to define runAsNonRoot directive
-            securityContext: {}
-            # The command to run in the cronjob container
-            # Example to incerase memory limit: php -d memory_limit=2G ...
-            command:
-                - php
-                - -f
-                - /var/www/html/cron.php
-                - --
-                - --verbose
+            concurrencyPolicy: Forbid
+            jobTemplate:
+                spec:
+                  backoffLimit: 5
+                  template:
+                    spec:
+                      restartPolicy: OnFailure
+                      affinity:
+                        podAffinity:
+                          requiredDuringSchedulingIgnoredDuringExecution:
+                            - labelSelector:
+                                matchExpressions:
+                                  - key: app.kubernetes.io/name
+                                    operator: In
+                                    values: [nextcloud]
+                              topologyKey: kubernetes.io/hostname
+                      containers:
+                        - name: db-backup
+                          image: nouchka/sqlite3:latest 
+                          command:
+                            - /bin/sh
+                            - -c
+                            - |
+                                set -e
+                                TS=$(date +%F-%H%M)
+                                echo "starting backup nextcloud-${TS}.db"
+                                sqlite3 /data/nextcloud.db ".backup '/backup/nextcloud-${TS}.db'"
+                                find /backup -name 'nextcloud-*.db' -mtime +14 -delete
+                                echo "done; current backups:"
+                                ls -la /backup
+                          volumeMounts:
+                            - name: nc-data
+                              mountPath: /data
+                              subPath: data  
+                            - name: backup-dir
+                              mountPath: /backup
+                      volumes:
+                        - name: nc-data
+                          persistentVolumeClaim:
+                            claimName: nextcloud-nextcloud     
+                        - name: backup-dir
+                          hostPath:                        
+                            path: /media/ssd/nextcloud
+                            type: DirectoryOrCreate
     service:
         type: ClusterIP
         port: 8080
