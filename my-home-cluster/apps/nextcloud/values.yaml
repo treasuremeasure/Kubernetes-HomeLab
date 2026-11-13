@@ -278,7 +278,7 @@ nextcloud:
         enabled: true
         type: custom
         cronjob:
-            schedule: '09 16 * * *'
+            schedule: '03 12 * * *'
             timeZone: Europe/Moscow
             successfulJobsHistoryLimit: 3
             failedJobsHistoryLimit: 5
